@@ -105,8 +105,7 @@ def pidserach_search_doc(pid, search_text):
         search_text = urlsafe_b64decode(search_text).decode()
     except UnicodeError:
         return {"msg":"Text sended is not valid"},404
-    return list(DB["docs"].find({"pid":pid,"$text":{"$search":search_text}},{"score":{"$meta":"textScore"},"_id":False})
-                            .sort([("score",{"$meta":"textScore"}),("date",ASCENDING)]))
+    return list(DB["docs"].find({"pid":pid,"$text":{"$search":search_text}},{"_id":False}).sort("date",DESCENDING))
 
 docs.register_blueprint(docs_pid,url_prefix="/pid")
 
@@ -149,8 +148,7 @@ def search_doc(search_text):
         search_text = urlsafe_b64decode(search_text).decode()
     except UnicodeError:
         return {"msg":"Text sended is not valid"},404
-    return list(DB["docs"].find({"$text":{"$search":search_text}},{"score":{"$meta":"textScore"},"_id":False})
-                                    .sort([("score",{"$meta":"textScore"}),("date",ASCENDING)]))
+    return list(DB["docs"].find({"$text":{"$search":search_text}},{"score":{"$meta":"textScore"},"_id":False}).sort("date",DESCENDING))
 
 app.register_blueprint(docs,url_prefix="/docs")
 
