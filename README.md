@@ -15,7 +15,7 @@ Guarda la piattaforma in funzione! I.I.S.S Luigi dell'erba (Castellana Grotte):
 
 #### 1. Configurazione Bot Telegram
 
-Inizialmente dovrai cerare il bot su telegram
+Inizialmente dovrai creare il bot su telegram
 - Creazione del Bot tramite [@BotFather](https://t.me/BotFather)
 - Acquisizione del Token del BOT
 - Acquisizione del Chat ID dell'account amministratore. [@get_my_chat_id_bot](https://t.me/get_my_chat_id_bot)
@@ -26,7 +26,7 @@ Inizialmente dovrai cerare il bot su telegram
 
 #### 2. Configurazione Piattaforma Web + Webhook (Opzionale)
 
-Configura il tuo server per gestire la piattaforma web tramite ad esempio un webproxy (ngnix, apache ecc...).
+Configura il tuo server per gestire la piattaforma web tramite un webproxy (ngnix, apache ecc...).
 Per il corretto funzionamento della piattaforma inoltre è necessario che il percorso base del webserver coincida con quello pubblico.
 
 Esempio:
@@ -51,13 +51,13 @@ Per evitare problemi nella comunicazione con telegram, e rendere reattivo il bot
 
 #### 3. Generazione della configurazione
 
-Ora per creare la configurazione, avviare lo script [mkconfig.py](./mkconfig.py) che chiederà una serie di informazioni utili a creare la configurazione da avviare, saranno necessari tutte le informazioni acquisite in precedenza e il link della tua scuola su trasparenzascuole.it
+Ora per creare la configurazione, avviare lo script [mkconfig.py](./mkconfig.py) che chiederà una serie di informazioni utili a creare la configurazione docker (saranno necessarie tutte le informazioni acquisite in precedenza + il link della tua scuola su trasparenzascuole.it)
 
 ---
 
 #### 4. Avvio del progetto
 
-Per avviare il progetto, installa docker e docker compose sulla tua macchina ed esegui nella cartella principale del progetto:
+Per avviare il progetto, installa `docker` e `docker-compose` sulla tua macchina ed esegui nella cartella principale del progetto il seguente comando:
 ```bash
 docker-compose up -d --build
 ```
@@ -73,7 +73,7 @@ docker-compose logs api
 
 ## Come funziona? 💡
 
-Il progetto è basato su [docker](https://www.docker.com/) che permette di avere una flessibilita e facilità di installazione molto alta, oltre che ad assicurare un alto livello di sicurezza! Il cuore che batte all'interno del progetto è il database [Mongo DB](https://www.mongodb.com/) responsabile del salvataggio di tutti i documenti e dei dati degli utenti. Infine 2 container che sviluppano le 2 principali funzionalità: Il bot telegram sviluppato in python e il Web server WSGI basato su gunicorn:flask che a suo interno avvia anche un daemon, responsabile e incaricato per tenere i dati sempre sincronizzati con trasparenzascuole.it
+Il progetto è basato su [docker](https://www.docker.com/) che permette di avere una flessibilita e facilità di installazione alta, oltre che ad assicurare un alto livello di sicurezza elevato! Il cuore che batte all'interno del progetto è il database [Mongo DB](https://www.mongodb.com/) responsabile del salvataggio di tutti i documenti e dei dati degli utenti. Infine il progetto ha i 2 container che sviluppano le 2 principali funzionalità: Il bot telegram sviluppato in python e il Web server WSGI basato su gunicorn:flask che a suo interno avvia anche un daemon, responsabile della sincronizzazione dei dati con trasparenzascuole.it
 
 ## Credits
 - [Mozilla PDF.JS](https://mozilla.github.io/pdf.js/)
