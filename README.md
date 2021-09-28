@@ -78,6 +78,7 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 ## Credits
 - [Mozilla PDF.JS](https://mozilla.github.io/pdf.js/)
 
+## [Donazioni](https://donorbox.org/bot-trasparenzascuole)
 
 ### Sviluppato da [DomySh](https://domysh.com) 👨‍💻
 
