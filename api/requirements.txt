@@ -1,0 +1,7 @@
+lxml
+requests
+ujson
+urllib3
+pymongo
+gunicorn
+Flask

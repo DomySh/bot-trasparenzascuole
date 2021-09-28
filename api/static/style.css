@@ -1,0 +1,64 @@
+body {background-color: #232729;}
+#canvases canvas {
+        margin: 20px auto;
+        width:100%;
+        max-width:100%;
+        display: block;
+}
+nav li.selected:hover a{
+background-color: rgb(77, 122, 167);
+transition: 0.6s;
+}
+
+#h-space{
+    width:90%;
+    margin:auto;
+}
+.pop-up{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 2vh;
+    right: 2vh;
+    background-color: rgb(103, 162, 221);
+    transition: background-color 400ms;
+    transition: bottom 400ms;
+    border: 5px solid #555;
+    z-index:50;
+}
+.pop-up:hover{
+    background-color: rgb(77, 121, 165);
+    transition: background-color 400ms;
+}
+.pop-up *{
+    width:100%;
+    height:100%;
+    font-size:20px;
+    padding:2px;
+}
+.move-down{
+    transition: bottom 400ms;
+    bottom:-100px;
+}
+
+
+#canvas_more{
+    display:block;
+    width: 100%;
+    padding-top:10px;
+    padding-bottom:10px;
+    background-color: rgb(103, 162, 221);
+    color:#FFF;
+    text-align:center;
+    border-radius:20px;
+    font-size:1.3em;
+    opacity:1;
+    transition: opacity 800ms;
+    margin-bottom:20px;
+}
+#canvas_more:hover{
+	opacity:0.8;
+	transition: opacity 800ms;
+}
+

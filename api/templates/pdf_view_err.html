@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lettore Documenti</title>
+	<link href="/static/icon.png" rel="icon" type="image/png" />
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="/static/css/weberr.css" />	
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Lettore Documenti">
+	<meta property="og:description" content="Lettore PDF">
+	<meta property="og:url" content="{{ config['PUBLIC'] }}/view/">
+	<meta property="og:image" content="{{ config['PUBLIC'] }}/static/icon.png">
+	<meta property="og:site_name" content="Lettore PDF" />
+	<meta content="width=device-width, initial-scale = 1.0" name="viewport">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+	<link rel="stylesheet" href="{{ config['PUBLIC'] }}/static/style.css" />
+</head>
+
+<body>
+	<div class="overlay all" id="init_load_div">
+		<div class="tot-centered2">
+			<h2 style="color:yellow;">⚠️ Ops! Si è verificato un problema!</h2>
+			{% if msg %}
+				<b>{{ msg }}</b>
+			{% else %}
+				<b>La circolare potrebbe essere stata eliminata o il link non è valido!</b>
+			{% endif %}
+			
+		</div>
+	</div>
+	
+</body>
+</html>

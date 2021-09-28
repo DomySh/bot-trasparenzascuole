@@ -1,0 +1,6 @@
+python-telegram-bot
+requests
+ujson
+urllib3
+pymongo
+python-dateutil

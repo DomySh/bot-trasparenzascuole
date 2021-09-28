@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="it">
+
+
+<head>
+    <link href="/static/icon.png" rel="icon" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="/static/css/webviewer.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="{{ config['PUBLIC'] }}/static/icon.png" property="og:image">
+    <meta content="Visualizzazione e filtro documenti" name="description">
+    <meta content="Circolari WEB" property="og:title">
+    <meta content="{{ config['PUBLIC'] }}/web" property="og:url">
+    <meta content="Visualizzazione e filtro documenti" property="og:description">
+    <meta content="website" property="og:type">
+    <meta content="{{ config['PUBLIC'] }}" name="twitter:domain">
+    <meta content="summary" name="twitter:card">
+    <meta content="Circolari WEB" name="twitter:title">
+    <meta content="{{ config['PUBLIC'] }}/web" name="twitter:url">
+    <meta content="Visualizzazione e filtro documenti" name="twitter:description">
+    <meta content="Visualizzazione e filtro documenti" itemprop="description">
+    <meta content="{{ config['PUBLIC'] }}/web" itemprop="url">
+    <title>Circolari WEB</title>
+</head>
+
+<body>
+
+    <header style="background-color: #2e2e2e; padding: 30px; padding-bottom: 30px;">
+        <h1>Circolari Web 📝</h1>
+        <p>Made by <a href="https://domysh.com">DomySh</a></p>
+        <span style="color: #FFF;"><b>{{ customer_name }}</b></span>
+
+        <div class="d-flex justify-content-center row">
+            <div class="col-7 col-sm-9">
+                <div class="form__group field">
+                    <input type="input" class="form__field" placeholder="Cerca" id='search' required />
+                    <label for="name" class="form__label">Cerca</label>
+                </div>
+            </div>
+            <div class="col-5 col-sm-3">
+                <button class="submit-button state-0">Invia</button>
+            </div>
+        </div>
+        <div id="pid_selection" style="display: flex;align-items: right; justify-content: right;margin-top:30px;">
+            <h6 style="margin-right:10px">Bacheca:</h6>
+            <div class="select">
+                <select id="pid_select" onchange="bacheca_filter()">
+                    <option value="all" selected>Tutti</option>
+                    {% for ele in pids %}
+                        <option value="{{ele['id']}}">{{ele['name']}}</option>
+                    {% endfor %}
+                </select>
+                <span class="focus"></span>
+            </div>
+        </div>
+    </header>
+    <main class="container" id="content">
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/webviewer.js?1.0.1"></script>
+
+</body>
+
+
+</html>
