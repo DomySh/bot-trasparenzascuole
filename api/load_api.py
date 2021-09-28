@@ -281,7 +281,8 @@ def get_customer_name():
 
 @app.route("/")
 def web_view():
-    customer = DB["static"].find_one({"id":"updater"})["customer_name"]
+    customer = DB["static"].find_one({"id":"updater"})
+    customer = customer["customer_name"] if "customer_name" in customer else None
     return render_template("webview.html",
                             customer_name=customer,
                             pids= list(DB["pids"].find({})))

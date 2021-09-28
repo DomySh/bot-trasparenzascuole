@@ -13,27 +13,28 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <meta content="{{ config['PUBLIC'] }}/static/icon.png" property="og:image">
     <meta content="Visualizzazione e filtro documenti" name="description">
-    <meta content="Circolari WEB" property="og:title">
+    <meta content="Documenti Web" property="og:title">
     <meta content="{{ config['PUBLIC'] }}/web" property="og:url">
     <meta content="Visualizzazione e filtro documenti" property="og:description">
     <meta content="website" property="og:type">
     <meta content="{{ config['PUBLIC'] }}" name="twitter:domain">
     <meta content="summary" name="twitter:card">
-    <meta content="Circolari WEB" name="twitter:title">
+    <meta content="Documenti Web" name="twitter:title">
     <meta content="{{ config['PUBLIC'] }}/web" name="twitter:url">
     <meta content="Visualizzazione e filtro documenti" name="twitter:description">
     <meta content="Visualizzazione e filtro documenti" itemprop="description">
     <meta content="{{ config['PUBLIC'] }}/web" itemprop="url">
-    <title>Circolari WEB</title>
+    <title>Documenti Web</title>
 </head>
 
 <body>
 
     <header style="background-color: #2e2e2e; padding: 30px; padding-bottom: 30px;">
-        <h1>Circolari Web 📝</h1>
+        <h1>Documenti Web 📝</h1>
         <p>Made by <a href="https://domysh.com">DomySh</a></p>
-        <span style="color: #FFF;"><b>{{ customer_name }}</b></span>
-
+	{% if customer_name %}
+        	<span style="color: #FFF;"><b>{{ customer_name }}</b></span>
+	{% endif %}
         <div class="d-flex justify-content-center row">
             <div class="col-7 col-sm-9">
                 <div class="form__group field">
