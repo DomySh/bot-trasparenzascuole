@@ -82,5 +82,5 @@ STATIC_STRINGS = {
     0:"Clicca \"Avanti\" o \"Indietro\" per scorrere i documenti ➡️",
     1:"Ci sono dei nuovi aggiornamenti! 📨🎺",
     2:"C'è un nuovo aggiornamento! 📨🎺",
-    3:"Attenzione! L'allegato di questa circolare è stato aggiornato! ⚠️"  
+    3:"\nAttenzione! L'allegato di questo documento è stato aggiornato! ⚠️"  
 }

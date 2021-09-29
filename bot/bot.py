@@ -100,11 +100,6 @@ def main():
     init()
     run_bot_loop()
 
-"""
-DA IMPLEMENTARE:
-- Attivazione / Disattivazione Maintenance mode
-"""
-
 
 if __name__ == '__main__': main()
 
