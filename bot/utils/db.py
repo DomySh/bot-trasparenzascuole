@@ -1,6 +1,6 @@
 import random, string, json
 from hashlib import sha256
-from pymongo import MongoClient, IndexModel, ASCENDING
+from pymongo import MongoClient, IndexModel, ASCENDING, DESCENDING
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime
 from base64 import b64encode
@@ -216,6 +216,53 @@ class TelegramUser:
         return int(DB["users"].count({"admin":{"$exists":True}}))
     
 
+def index_range(index_from,index_to):
+    index_from = int(index_from)
+    index_to = int(index_to)
+    if index_to < index_from:
+        index_from, index_to = index_to, index_from
+    return index_from, index_to
+
+class Docs:
+    @staticmethod
+    def range(index_a,index_b):
+        index_a, index_b = index_range(index_a,index_b)
+        return list(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[int(index_a):int(index_b)])
+    
+    @staticmethod
+    def match(match_id):
+        return DB["docs"].find_one({"match":match_id},{"_id":False})
+    
+    @staticmethod
+    def search(str_search):
+        for ele in DB["docs"].find({"$text":{"$search":str_search}},{"_id":False, "match":True}).sort("date",DESCENDING):
+            yield ele["match"]
+
+    @staticmethod
+    def index(indx):
+        return DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[int(indx)]
+    
+    @staticmethod
+    def length():
+        return int(DB["docs"].count_documents({}))
+
+    @staticmethod
+    def pids_info():
+        return list(DB["pids"].find({},{"_id":False}))
+    
+    
+
+class Events:
+    @staticmethod
+    def update(last_index):
+        return list(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING)[int(last_index):])
+    
+    @staticmethod
+    def length():
+        return int(DB["docs_events"].count_documents({}))
+
+
+
 global SETTINGS_CACHE
 SETTINGS_CACHE = None
 SETTINGS_ID = "tgbot"
@@ -242,3 +289,5 @@ def get_pid_name(pid_id):
         if ele["id"] == pid_id:
             return ele["name"]
     return None
+
+

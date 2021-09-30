@@ -1,7 +1,7 @@
 from utils import glob, db
 import socket, threading, traceback
 import utils.config as conf
-from utils.funcs import api, send_doc
+from utils.funcs import send_doc
 from concurrent.futures import ThreadPoolExecutor
 
 def init():
@@ -39,10 +39,9 @@ def send_message_bcast(user, docs_feed):
     send_doc(send_func,docs_feed)
 
 def check_updates():
-    updates = api(f"/events/update/{get_cached_events_len()}")
-    conf.settings("events_len",updates["len"])
-    conf.settings("pid_infos",api("/docs/pids"))
-    updates = updates["updates"]
+    updates = db.Events.update(get_cached_events_len())
+    conf.settings("events_len",db.Events.length())
+    conf.settings("pid_infos",db.Docs.pids_info())
     if len(updates) == 0: return 
     docs_update = []
     deleted_match = []
@@ -56,7 +55,7 @@ def check_updates():
     del deleted_match
 
     if len(docs_update) > 0:
-        docs_update[0]["doc"] = api(f"/docs/match/{docs_update[0]['doc']}")
+        docs_update[0]["doc"] = db.Docs.match(docs_update[0]['doc'])
         update_callback = {"type":"list_scroll", "list":docs_update, "header":2 if len(docs_update) == 1 else 1}
         with conf.BCAST_LOCK:
             with ThreadPoolExecutor(conf.BROADCAST_THREADING_LIMIT) as exec:

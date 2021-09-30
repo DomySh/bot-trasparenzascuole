@@ -87,6 +87,5 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 
 ## Note sul Testing [Fix e Aggiunte]:
 - Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
-- Recezione di exception sulla connesione http interna alle API (Fix ideati: ripetizione della chiamata API in certi casi, o sostituzione delle chiamate alle api http con il diretto accesso alle informazioni tramite il database, O altrimenti invio dei dati di aggiornamento direttamente tramite la socket già aperta tra le API e la piattaforma web, continuando però ad utilizzare internamente le API web)
 - Aggiungere Watcher sulla pagina web per la visualizzazione delle circolari da utilizzare per aggiornare la pagina in tempo reale quando ci sono delle nuove notifiche
 
