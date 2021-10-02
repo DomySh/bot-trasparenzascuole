@@ -52,6 +52,10 @@ def init():
         IndexModel([("id",ASCENDING)],unique=True),
         IndexModel([("created",ASCENDING)],expireAfterSeconds=60*MANDATORY_TIME_LIMIT)
     ])
+    DB["feed_msg"].create_indexes([
+        IndexModel([("match",ASCENDING)],unique=True),
+        IndexModel([("created",ASCENDING)],expireAfterSeconds=60*60*24*10)
+    ])
     _get_settings()
 
 def gen_digits(n_digits):
@@ -249,8 +253,23 @@ class Docs:
     @staticmethod
     def pids_info():
         return list(DB["pids"].find({},{"_id":False}))
+
+class FeedMsg:
+
+    @staticmethod
+    def add_msg_feed(match_id,element):
+        if type(element) == list:
+            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":{"$each":element}}},upsert=True)
+        else:    
+            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":element}},upsert=True)
     
-    
+    @staticmethod
+    def get_msg_feed(match_id):
+        res = DB["feed_msg"].find_one_and_delete({"match":match_id})
+        if res is None:
+            return []
+        else:
+            return res["messages"]
 
 class Events:
     @staticmethod
@@ -284,8 +303,7 @@ def _set_settings(settings):
     DB["static"].update_one({"id":SETTINGS_ID},{"$set":settings})
 
 def get_pid_name(pid_id):
-    from utils import config
-    for ele in config.settings("pid_infos"):
+    for ele in Docs.pids_info():
         if ele["id"] == pid_id:
             return ele["name"]
     return None

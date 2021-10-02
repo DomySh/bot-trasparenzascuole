@@ -1,4 +1,4 @@
-import requests, re, json, os
+import requests, json, os
 from urllib.parse import parse_qs
 from lxml import html
 from urllib.parse import urlparse
@@ -186,7 +186,7 @@ class BachecaDataParser:
         try:
             d_tag = post.xpath("div//button")[0]
             filename = d_tag.attrib['data-sourcefilename']
-            return b64decode(filename).decode()
+            return b64decode(filename).decode().strip()
         except Exception:
             return None
 
@@ -200,22 +200,21 @@ class BachecaDataParser:
 
     def _get_hash(self,post):
         try:
-            return post.xpath("div//i")[1].text  
+            return post.xpath("div//i")[1].text.strip()  
         except Exception:
             return None
 
     def _get_description(self,post):
         try:
-            return post.xpath("div//i")[2].text[len('Descrizione: '):]
+            return post.xpath("div//i")[2].text[len('Descrizione: '):].strip()
         except Exception:
             return None
 
     def _get_note(self,post):
         try:
-            return post.xpath("div//i")[3].text[len('Note: '):]
+            return post.xpath("div//i")[3].text[len('Note: '):].strip()
         except Exception:
             return None    
-
 
 if __name__ == "__main__":
     print(TrasparenzeScuoleMap().download_data())

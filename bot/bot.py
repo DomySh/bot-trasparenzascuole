@@ -70,7 +70,7 @@ def init():
     import functools
     import builtins as __builtin__
     __builtin__.print = functools.partial(print, flush=True)
-    glob.updater = Updater(conf.TOKEN, use_context=True)
+    glob.updater = Updater(conf.TOKEN, use_context=True, workers=conf.THREADS)
     db.init()
     update_job.init()
     init_dp()

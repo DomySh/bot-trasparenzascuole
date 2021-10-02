@@ -44,7 +44,7 @@ See https://github.com/adobe-type-tools/cmap-resources
   <meta property="og:title" content="Lettore Docuemnti PDF">
   <meta property="og:site_name" content="Allegato PDF">
 
-  <meta property="og:image" content="{{ config['PUBLIC'] }}/static/icon.png">
+  <meta property="og:image" content="{{ public_url }}/static/icon.png">
 
   <meta content="width=device-width, initial-scale = 1.0" name="viewport">
   <link href="/static/icon.png" rel="icon" type="image/png" />
@@ -67,7 +67,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 </head>
 
 <body tabindex="1">
-  <a download class="pop-up" id="download-btn" href="{{ config['PUBLIC'] }}/download/{{ doc['match'] }}"><i class="fa fa-download"
+  <a download class="pop-up" id="download-btn" href="{{ public_url }}/download/{{ doc['match'] }}"><i class="fa fa-download"
       aria-hidden="true"></i></a>
   <style>
     .pop-up {

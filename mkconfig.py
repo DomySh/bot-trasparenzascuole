@@ -91,6 +91,9 @@ def set_debug():
         global API_PORT
         yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL=http://127.0.0.1:{API_PORT}/")
         yaml_json["services"]["api"]["environment"].append(f"API_AXIOS_DATA_LINK=http://127.0.0.1:{API_PORT}/")
+        yaml_json["services"]["api"]["environment"].append("THREADS=1")
+        yaml_json["services"]["bot"]["environment"].append("THREADS=1")
+        yaml_json["services"]["bot"]["environment"].append("THREAD_FOR_BROADCASTING=1")
         return True
     else:
         yaml_json["services"]["bot"]["environment"].append("DEBUG=0")
@@ -177,6 +180,25 @@ def axios_customer_id():
             yaml_json["services"]["api"]["environment"].append(f"AXIOS_CUSTOMER_ID={res}")
             break
 
+def bot_threads():
+    while True:
+        print("[[ BOT_THREADS ]]\nScegli quanti thread dedicare all'ascolto dei messaggi sul bot telegram.")
+        res = input("(DEFAULT=4)> ")
+        if res == "": res = "4"
+        if res.isdecimal() and int(res)>0 and int(res)<=100:
+            yaml_json["services"]["bot"]["environment"].append(f"THREADS={int(res)}")
+            break
+        
+
+def api_threads():
+    while True:
+        print("[[ API_THREADS ]]\nScegli quanti thread dedicare alla piattaforma web")
+        res = input("(DEFAULT=3)> ")
+        if res == "": res = "3"
+        if res.isdecimal() and int(res)>0 and int(res)<=100:
+            yaml_json["services"]["api"]["environment"].append(f"THREADS={int(res)}")
+            break
+
 def from_json_to_yml(json_data:dict):
     yml = ""
     for key,value in json_data.items():
@@ -210,8 +232,9 @@ def handle():
             webhook_port()
             webhook_url()
         cache_attachments()
-
-    threads_for_broadcast()
+        bot_threads()
+        api_threads()
+        threads_for_broadcast()
     send_alerts_to_admin()
     cors_disabled()
     with open("./docker-compose.yml","wt") as f:

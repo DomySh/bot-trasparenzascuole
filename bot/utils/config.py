@@ -22,6 +22,7 @@ ctrl_env("API_EXTERNAL_URL","API_EXTERNAL_URL is required to be in environment! 
 EXTERNAL_API = os.environ["API_EXTERNAL_URL"]
 
 BROADCAST_THREADING_LIMIT = int(os.getenv("THREAD_FOR_BROADCASTING",1))
+THREADS = int(os.getenv("THREADS",4))
 DEBUG = os.getenv("DEBUG","False").lower() in ("true","t","1","yes","y")
 SEND_EXCEPTION_ADVICE_TO_ADMIN = os.getenv("SEND_EXCEPTION_ADVICE_TO_ADMIN","False").lower() in ("true","t","1","yes","y")
 

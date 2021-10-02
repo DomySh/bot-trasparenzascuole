@@ -155,7 +155,7 @@ def callback_admin_list(update,user,data):
     return ConversationHandler.END
 
 handlers = [
-    CommandHandler('adminlist',request_admin_list, run_async=True),
+    CommandHandler('adminlist',request_admin_list),
     CallbackQueryHandler(callback_admin_list,pattern=ADMIN_LIST_SCROLL.regex_filter()),
     CallbackQueryHandler(show_admin_action,pattern=SHOW_ADMIN_ACTION.regex_filter()),
     CallbackQueryHandler(confirm_admin_action,pattern=CONFIRM_ADMIN_ACTION.regex_filter()),

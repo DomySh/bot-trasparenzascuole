@@ -1,4 +1,6 @@
 python-telegram-bot
+python-telegram-bot[socks]
+python-telegram-bot[ujson]
 ujson
 urllib3
 pymongo

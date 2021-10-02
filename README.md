@@ -1,4 +1,4 @@
-<h1><img align="left" src="doc/icon.png" width="70">[Testing] Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
+<h1><img align="left" src="doc/icon.png" width="70">[Testing/Developing] Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
 
 ---
 
@@ -84,8 +84,12 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 
 ---
 
-
 ## Note sul Testing [Fix e Aggiunte]:
+- Messaggi di notifica dinamici (In caso di "update" il messaggio della vecchia notifica verrà eliminato, in caso "delete" il messaggio precedente deve essere sostituito con un messaggio che avvisa della cancellazione)
+- Passaggio da programmazione tradizionali (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
+    - Da Flask a FastAPI [Testing]
+    - Da PyMongo a Motor [Solo su FastAPI] [Impossibile da realizzare (Non supportato dalla libreria)]
 - Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
-- Aggiungere Watcher sulla pagina web per la visualizzazione delle circolari da utilizzare per aggiornare la pagina in tempo reale quando ci sono delle nuove notifiche
-
+- Aggiungere Watcher sulla pagina web per la visualizzazione delle circolari da utilizzare per aggiornare la pagina in tempo reale quando ci sono delle nuove notifiche (Con socket io)
+- Getsire Update molteplici in contemporanea (Bug rilevato) [Testing]
+- Rivisitare il metodo di ricerca dei documenti

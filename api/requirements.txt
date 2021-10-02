@@ -1,7 +1,6 @@
+fastapi[all]
 lxml
-requests
-ujson
 urllib3
-pymongo
-gunicorn
-Flask
+requests
+motor
+httpx

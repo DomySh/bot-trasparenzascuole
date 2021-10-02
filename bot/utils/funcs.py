@@ -58,11 +58,13 @@ def send_doc(callback,feed):
             doc_data = db.Docs.match(feed['list'][feed['page']])
         elif "doc" not in feed['list'][feed['page']].keys():
             doc_data = feed['list'][feed['page']]
+            feed['list'][feed['page']] = feed['list'][feed['page']]["match"]
         elif type(feed['list'][feed['page']]['doc']) == str:
             doc_data = db.Docs.match(feed['list'][feed['page']]['doc'])
             header_doc = feed['list'][feed['page']]['header'] if "header" in feed['list'][feed['page']].keys() else None
         else:
             doc_data = feed['list'][feed['page']]['doc']
+            feed['list'][feed['page']]['doc'] = feed['list'][feed['page']]['doc']["match"] 
             header_doc = feed['list'][feed['page']]['header'] if "header" in feed['list'][feed['page']].keys() else None
 
 

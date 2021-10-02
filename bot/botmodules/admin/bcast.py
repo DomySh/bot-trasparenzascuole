@@ -83,7 +83,7 @@ def bcast_accepted(update,user,data):
     return ConversationHandler.END
 
 handlers = [
-    CallbackQueryHandler(bcast_accepted,pattern=BCAST_EXECUTE.regex_filter(),run_async=True),
+    CallbackQueryHandler(bcast_accepted,pattern=BCAST_EXECUTE.regex_filter()),
     CallbackQueryHandler(bcast_edit,pattern=BCAST_EDIT.regex_filter()),
     ConversationHandler(
         entry_points = [CommandHandler('bcast', bcast_command)],
