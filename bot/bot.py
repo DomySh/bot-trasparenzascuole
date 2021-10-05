@@ -86,13 +86,11 @@ def run_bot_loop():
             )
         else:
             glob.updater.start_polling()
+        print("------------------- Bot Starting! ----------------------")
     else:
         glob.updater.start_polling()
         conf.settings("maintenance",True)
-    if conf.DEBUG:
         print("------------------- Bot in DEBUGGING Starting! ----------------------")
-    else:
-        print("------------------- Bot Starting! ----------------------")
     
     glob.updater.idle()
 

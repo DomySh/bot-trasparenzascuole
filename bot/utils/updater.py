@@ -1,25 +1,12 @@
 from utils import glob, db
-import socket, threading, traceback
+import threading, traceback, time
 import utils.config as conf
 from utils.funcs import send_doc
 from concurrent.futures import ThreadPoolExecutor
 
 def init():
-    update_docs()
-    start_update_deamons()
-
-def event_loop(sk):
-    while True:
-        conn, _ = sk.accept()
-        conn.close()
-        update_docs() 
-
-def start_update_deamons():
-    sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sk.bind(("0.0.0.0",4040))
-    sk.listen(1)
-    threading.Thread(target=event_loop,args=(sk,)).start()
-
+    threading.Thread(target=update_docs).start()
+    
 def get_cached_events_len():
     res = conf.settings("events_len")
     if res is None:
@@ -59,8 +46,8 @@ def edit_deleted_feeds(match_ids):
 
 def check_updates():
     updates = db.Events.update(get_cached_events_len())
-    conf.settings("events_len",db.Events.length())
     if len(updates) == 0: return 
+    conf.settings("events_len",db.Events.length())
     print(updates)
     docs_update = []
     deleted_match = []
@@ -83,8 +70,9 @@ def check_updates():
                 exec.map(lambda x: send_message_bcast(x,update_callback),db.TelegramUser.get_all_users())
 
 def update_docs():
-    try:
-        check_updates()
-    except Exception as e:
-        glob.adminmsg(f"Si è verificato un errore nel controllo degli aggiornamenti delle circolari!\nError: {str(e)}")
-        traceback.print_exc()
+    while True:
+        try:
+            check_updates()
+        except Exception as e:
+            glob.adminmsg(f"Si è verificato un errore nel controllo degli aggiornamenti delle circolari!\nError: {str(e)}")
+            traceback.print_exc()

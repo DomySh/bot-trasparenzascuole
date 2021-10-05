@@ -1,17 +1,12 @@
 from datetime import datetime
-from re import match
-import circolari, os, socket, traceback, time
+import circolari, os, traceback, time
 from pymongo import MongoClient, IndexModel, ASCENDING, TEXT
 from pathlib import Path
-from base64 import urlsafe_b64encode
-from hashlib import md5
 
-global NEW_UPDATES_CHECKED
 MONGO_URL = "mongodb://mongo/"
 DB_CONN = MongoClient(MONGO_URL)
 DB = DB_CONN["main"]
 AXIOS = circolari.TrasparenzeScuoleMap()
-NEW_UPDATES_CHECKED = False
 AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*1))
 UPDATE_FREQUENCY = int(os.getenv("AXIOS_UPDATER_FREQUENCY",60*3))
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
@@ -53,14 +48,6 @@ static:
         ...
     }
 """
-
-def signal_updates():
-    global NEW_UPDATES_CHECKED
-    if NEW_UPDATES_CHECKED:
-        sk = socket.socket()
-        sk.connect(("bot",4040))
-        sk.close()
-        NEW_UPDATES_CHECKED = False
 
 def delete_data_file(match_id):
     if API_CACHE_ATTACHMENTS:
@@ -129,8 +116,6 @@ def update_settings(settings):
     DB["static"].update_one({"id":"updater"},{"$set":settings})
 
 def update_pids(settings):
-    global NEW_UPDATES_CHECKED
-    NEW_UPDATES_CHECKED = True
     pids = AXIOS.pids()
     for ele in DB["pids"].find({"id":{"$nin":[ele.id for ele in pids]}}):
         DB["docs"].delete_many({"pid":ele["id"]})
@@ -162,13 +147,11 @@ def force_pids_update():
     DB["static"].update_one({"id":"updater"},{"$unset":{"last_pid_updates":""}})
 
 def check_and_update_pids():
-    global NEW_UPDATES_CHECKED
     for pid in AXIOS.pids():
         cached_rss_count = DB["pids"].find_one({"id":pid.id})["rss_count"]
         online_rss_count = pid.rss_count()
         if cached_rss_count != online_rss_count:
             try:
-                NEW_UPDATES_CHECKED = True
                 download_and_update(pid)
                 DB["pids"].update_one({"id":pid.id},{"$set":{"rss_count":online_rss_count}})
             except Exception:
@@ -180,7 +163,6 @@ def updater():
         db_init_collections()
         check_pids_expire()
         check_and_update_pids()
-        signal_updates()
     except Exception:
         traceback.print_exc()
 
