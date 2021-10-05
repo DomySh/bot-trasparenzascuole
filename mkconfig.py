@@ -94,6 +94,9 @@ def set_debug():
         yaml_json["services"]["api"]["environment"].append("THREADS=1")
         yaml_json["services"]["bot"]["environment"].append("THREADS=1")
         yaml_json["services"]["bot"]["environment"].append("THREAD_FOR_BROADCASTING=1")
+        yaml_json["services"]["api"]["environment"].append("AXIOS_UPDATER_FREQUENCY=60")
+        yaml_json["services"]["bot"]["environment"].append(f"SEND_EXCEPTION_ADVICE_TO_ADMIN=1")
+        yaml_json["services"]["api"]["environment"].append(f"CORS_DISABLED=1")
         return True
     else:
         yaml_json["services"]["bot"]["environment"].append("DEBUG=0")
@@ -152,7 +155,8 @@ def web_platform_port():
     global API_PORT
     while True:
         print("[[ WEB_API_PORT ]]\nScegli su quale porta avviare (sull'interfaccia 127.0.0.1) la piattaforma web\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/README.md")
-        res = input("> ")
+        res = input("(Default=8080)> ")
+        if res == "": res = "8080"
         if res.isdecimal() and int(res)>=0 and int(res)<=65535:
             API_PORT = int(res)
             yaml_json["services"]["api"]["ports"]=[f"127.0.0.1:{int(res)}:9999"]
@@ -199,6 +203,17 @@ def api_threads():
             yaml_json["services"]["api"]["environment"].append(f"THREADS={int(res)}")
             break
 
+def updater_frequency():
+    while True:
+        print("[[ UPDATE_FREQUENCY ]]\nScegli l'intervallo di tempo da aspettare ripetutapente per il download dei dati dalla piattaforma axios")
+        res = input("(DEFAULT=2, Minuti)> ")
+        if res == "": res = "2"
+        if not res.isdecimal(): continue
+        if int(res)>=1 and int(res)<=60*24:
+            yaml_json["services"]["api"]["environment"].append(f"AXIOS_UPDATER_FREQUENCY={int(res)*60}")
+            break
+    
+
 def from_json_to_yml(json_data:dict):
     yml = ""
     for key,value in json_data.items():
@@ -235,8 +250,9 @@ def handle():
         bot_threads()
         api_threads()
         threads_for_broadcast()
-    send_alerts_to_admin()
-    cors_disabled()
+        updater_frequency()
+        send_alerts_to_admin()
+        cors_disabled()
     with open("./docker-compose.yml","wt") as f:
         f.write(from_json_to_yml(yaml_json))
     print("\nConfigurazione generata!\nAvvia con docker-compose up -d --build")

@@ -239,6 +239,7 @@ class Docs:
     
     @staticmethod
     def search(str_search):
+        str_search = " ".join(['"'+ele.strip()+'"' for ele in str_search.strip().replace('"','').split() if ele.strip() not in ("",None)])
         for ele in DB["docs"].find({"$text":{"$search":str_search}},{"_id":False, "match":True}).sort("date",DESCENDING):
             yield ele["match"]
 

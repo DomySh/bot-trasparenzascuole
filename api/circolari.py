@@ -102,7 +102,7 @@ class DocData:
 
     def match_id(self):
         if self._match is None:
-            res = str(self.date.timestamp())+self.pid.pid
+            res = str(self.date.strftime("%d.%m.%Y.%H.%M.%S"))+self.pid.pid
             if self.description is not None:
                 res+=self.description
             if self.note is not None:

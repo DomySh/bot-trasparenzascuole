@@ -85,11 +85,12 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 ---
 
 ## Note sul Testing [Fix e Aggiunte]:
-- Messaggi di notifica dinamici (In caso di "update" il messaggio della vecchia notifica verrà eliminato, in caso "delete" il messaggio precedente deve essere sostituito con un messaggio che avvisa della cancellazione)
+- Messaggi di notifica dinamici [testing]
 - Passaggio da programmazione tradizionali (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
     - Da Flask a FastAPI [Testing]
-    - Da PyMongo a Motor [Solo su FastAPI] [Impossibile da realizzare (Non supportato dalla libreria)]
+    - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]
+
+Problemi sugli aggiornamenri
 - Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
-- Aggiungere Watcher sulla pagina web per la visualizzazione delle circolari da utilizzare per aggiornare la pagina in tempo reale quando ci sono delle nuove notifiche (Con socket io)
 - Getsire Update molteplici in contemporanea (Bug rilevato) [Testing]
-- Rivisitare il metodo di ricerca dei documenti
+---> Cambiato il Match ID  (nell'hash modificato l'inserimento della data)

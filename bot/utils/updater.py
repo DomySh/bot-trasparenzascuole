@@ -77,6 +77,7 @@ def check_updates():
 
     if len(docs_update) > 0:
         update_callback = {"type":"list_scroll", "list":docs_update, "header":2 if len(docs_update) == 1 else 1}
+        update_callback["list"][0]["doc"] = db.Docs.match(update_callback["list"][0]["doc"])
         with conf.BCAST_LOCK:
             with ThreadPoolExecutor(conf.BROADCAST_THREADING_LIMIT) as exec:
                 exec.map(lambda x: send_message_bcast(x,update_callback),db.TelegramUser.get_all_users())

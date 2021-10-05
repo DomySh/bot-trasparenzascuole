@@ -53,7 +53,9 @@ def send_doc(callback,feed):
     if feed["type"] == "list_scroll":
         doc_data = None
         header_doc = None
-        if not "page" in feed.keys(): feed["page"] = 0
+        if len(feed["list"]) == 0: return None
+        if not "page" in feed.keys() or feed['page'] < 0 or feed["page"] >= len(feed["list"]):
+            feed["page"] = 0
         if type(feed['list'][feed['page']]) == str:
             doc_data = db.Docs.match(feed['list'][feed['page']])
         elif "doc" not in feed['list'][feed['page']].keys():
@@ -67,7 +69,10 @@ def send_doc(callback,feed):
             feed['list'][feed['page']]['doc'] = feed['list'][feed['page']]['doc']["match"] 
             header_doc = feed['list'][feed['page']]['header'] if "header" in feed['list'][feed['page']].keys() else None
 
-
+        if doc_data is None:
+            del feed['list'][feed['page']]
+            return send_doc(callback,feed)
+        
         keyb = [[InlineKeyboardButton("Mostra Allegato",url=viewer_link(doc_data))]]
         directional_buttons = []
         if feed["page"] > 0:

@@ -12,7 +12,7 @@ DB_CONN = MongoClient(MONGO_URL)
 DB = DB_CONN["main"]
 AXIOS = circolari.TrasparenzeScuoleMap()
 NEW_UPDATES_CHECKED = False
-AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*12))
+AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*1))
 UPDATE_FREQUENCY = int(os.getenv("AXIOS_UPDATER_FREQUENCY",60*3))
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
 """

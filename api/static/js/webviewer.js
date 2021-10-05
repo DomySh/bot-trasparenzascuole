@@ -10,6 +10,7 @@ let prefix_api = "";
 let search_activated = null;
 let search_content = null;
 let pids_infos = null
+let update_len = 0;
 
 input.addEventListener("keyup", function(event) {
     if (event.key === "Enter") {
@@ -116,14 +117,17 @@ function updateURLParameter(param, paramVal) {
     window.history.replaceState('', '', baseURL);
 }
 
-async function api_load(query) {
-    try {
+async function api_load(query, base_api="/docs", allow_prefix=true) {
+    try {    
         prefix = "/"
         if(query.length > 0 && query[0] == '/'){
                 prefix = ""
         }
+        url_str = ""
+        if (allow_prefix) url_str = base_api + prefix_api + prefix + query
+        else url_str = base_api + prefix + query
         var res = await $.ajax({
-            url: "/docs" + prefix_api + prefix + query,
+            url: url_str,
             dataType: 'json',
         });
         return res
@@ -273,8 +277,19 @@ async function search_init() {
     }
 }
 
+async function updates_detect(){
+    new_update = (await api_load("/len",base_api="/events",allow_prefix=false)).data;
+    if (new_update != update_len){
+        update_len = new_update
+        pids_infos = await api_load("/pids",base_api="/docs",allow_prefix=false)
+        reload()
+    }
+}
+
 async function main(){
-    pids_infos = await api_load("/pids")
+    update_len = (await api_load("/len",base_api="/events",allow_prefix=false)).data
+    setInterval(updates_detect,5000)
+    pids_infos = await api_load("/pids",base_api="/docs",allow_prefix=false)
     reload()
 }
 
@@ -352,8 +367,7 @@ function prev_page() {
     reload();
 }
 
-$(window).on('load', function() {
-    
+$(window).on('load', function() { 
     main();
 });
 
