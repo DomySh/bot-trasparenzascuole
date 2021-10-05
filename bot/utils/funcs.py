@@ -53,7 +53,7 @@ def send_doc(callback,feed):
     if feed["type"] == "list_scroll":
         doc_data = None
         header_doc = None
-        if len(feed["list"]) == 0: return None
+        if len(feed["list"]) == 0: return callback("I documenti in questa lista sono stati eliminati! 🚫")
         if not "page" in feed.keys() or feed['page'] < 0 or feed["page"] >= len(feed["list"]):
             feed["page"] = 0
         if type(feed['list'][feed['page']]) == str:
