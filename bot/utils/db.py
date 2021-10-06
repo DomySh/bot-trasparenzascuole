@@ -228,20 +228,14 @@ def index_range(index_from,index_to):
     return index_from, index_to
 
 def search_transform(s):
-    import re
-    res = []
-    keys = ["note","description"]
-    for k in keys:
-        res.append({k:{"$regex":"","$options":"gmi"}})
-        for ele in s.strip().split():
-            res[-1][k]["$regex"]+=f"(?=.*{re.escape(ele)})"
-    return {"$or":res}
+    return {"$text":{"$search":" ".join(['"'+ele.strip()+'"' for ele in s.strip().replace('"','').split() if ele.strip() not in ("",None)])}}
 
 class Docs:
     @staticmethod
     def range(index_a,index_b):
         index_a, index_b = index_range(index_a,index_b)
-        return list(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[int(index_a):int(index_b)])
+        if index_a < 0 or index_b < 0: return None
+        return list(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[index_a:index_b])
     
     @staticmethod
     def match(match_id):
@@ -254,7 +248,9 @@ class Docs:
 
     @staticmethod
     def index(indx):
-        return DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[int(indx)]
+        indx = int(indx)
+        if indx < 0: return None
+        return DB["docs"].find({},{"_id":False}).sort("date",ASCENDING)[indx]
     
     @staticmethod
     def length():

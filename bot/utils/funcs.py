@@ -92,6 +92,7 @@ def send_doc(callback,feed):
         return callback(text,parse_mode=ParseMode.HTML, reply_markup=keyb, disable_web_page_preview=True)
 
     elif feed["type"] == "index_scroll":
+        if db.Docs.length() == 0: return callback("Non ci sono documenti registrati 🚫")
         low_limit = feed["low_limit"] if "low_limit" in feed.keys() else 0
         high_limit = feed["high_limit"] if "high_limit" in feed.keys() else db.Docs.length()-1
         revered_scroll = feed["reversed"] if "reversed" in feed.keys() else False

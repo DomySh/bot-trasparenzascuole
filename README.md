@@ -85,12 +85,11 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 ---
 
 ## Note sul Testing [Fix e Aggiunte]:
-- Messaggi di notifica dinamici [testing]
-- Passaggio da programmazione tradizionali (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
+- Passaggio da programmazione tradizionale (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
     - Da Flask a FastAPI [Testing]
     - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]
-- Ricerca efficacie ma non efficiente! [Testing/Dev]
+
 Problemi sugli aggiornamenri
 - Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
 - Getsire Update molteplici in contemporanea (Bug rilevato) [Testing]
----> Cambiato il Match ID  (nell'hash modificato l'inserimento della data)
+---> Cambiato il Match ID  (nell'hash modificato l'inserimento della data) [Soluzione in prova!]

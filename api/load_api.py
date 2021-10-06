@@ -33,14 +33,7 @@ render = templates_obj.TemplateResponse
 ahttp = httpx.AsyncClient()
 
 def search_transform(s):
-    import re
-    res = []
-    keys = ["note","description"]
-    for k in keys:
-        res.append({k:{"$regex":"","$options":"gmi"}})
-        for ele in s.strip().split():
-            res[-1][k]["$regex"]+=f"(?=.*{re.escape(ele)})"
-    return {"$or":res}
+    return {"$text":{"$search":" ".join(['"'+ele.strip()+'"' for ele in s.strip().replace('"','').split() if ele.strip() not in ("",None)])}}
 
 
 def index_range(index_from,index_to):

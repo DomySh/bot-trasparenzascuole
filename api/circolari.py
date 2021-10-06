@@ -99,6 +99,7 @@ class DocData:
         self.download = download
         self.filename = filename
         self._match = None
+        self._keywords = None
 
     def match_id(self):
         if self._match is None:
@@ -109,6 +110,25 @@ class DocData:
                 res+=self.note
             self._match = urlsafe_b64encode(md5(res.encode()).digest()).decode().replace("=","")
         return self._match
+    
+    def keywords(self):
+        if self._keywords is None:
+            self._keywords = ""
+            last_space = False
+            merged_strings = (self.note if not self.note is None else "") + \
+                            " " + (self.description if not self.description is None else "") +\
+                            " " + (self.filename if not self.filename is None else "")
+            for l in merged_strings:
+                if l in "+=/\\|-_)(.:,;'?!\" ":
+                    if not last_space:
+                        self._keywords+=" "
+                        last_space = True
+                else:
+                    self._keywords+=l.lower()
+                    last_space = False
+            self._keywords = " ".join(list(set(self._keywords.split())))
+        return self._keywords
+
 
     def __iter__(self):
         yield from {
@@ -117,6 +137,7 @@ class DocData:
             "description": self.description,
             "note": self.note,
             "date": self.date,
+            "keywords":self.keywords(),
             "attachment":{
                 "hash": {
                     "digest":self.hash,

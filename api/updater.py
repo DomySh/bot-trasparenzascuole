@@ -92,8 +92,7 @@ def db_init_collections():
         IndexModel([("pid",ASCENDING)]),
         IndexModel([("match",ASCENDING)],unique=True),
         IndexModel([("date",ASCENDING)]),
-        IndexModel([("note",ASCENDING)]),
-        IndexModel([("description",ASCENDING)]),
+        IndexModel([("keywords",TEXT)],default_language="it"),
     ])
     DB["pids"].create_indexes([
         IndexModel([("id",ASCENDING)],unique=True),
