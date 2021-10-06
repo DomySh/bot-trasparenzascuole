@@ -33,7 +33,14 @@ render = templates_obj.TemplateResponse
 ahttp = httpx.AsyncClient()
 
 def search_transform(s):
-    return " ".join(['"'+ele.strip()+'"' for ele in s.strip().replace('"','').split() if ele.strip() not in ("",None)])
+    import re
+    res = []
+    keys = ["note","description","attachment.name"]
+    for k in keys:
+        res.append({k:{"$regex":"","$options":"gmi"}})
+        for ele in s.strip().split():
+            res[-1][k]["$regex"]+=f"(?=.*{re.escape(ele)})"
+    return {"$or":res}
 
 
 def index_range(index_from,index_to):
@@ -83,9 +90,10 @@ async def search_document_in_pid_by_text(pid: str, search_text: str):
     """Search docs in a pid sending a text query encoded in urlsafe_b64decode sorted by date"""
     try:
         search_text = search_transform(urlsafe_b64decode(search_text).decode())
+        search_text["pid"] = pid
     except Exception:
         raise HTTPException(status_code=404, detail="Invalid search text encoding, please encode with urlsafe/b64decode!")
-    return await mongolist(DB["docs"].find({"pid":pid,"$text":{"$search":search_text}},{"_id":False}).sort("date",DESCENDING))
+    return await mongolist(DB["docs"].find(search_text,{"_id":False}).sort("date",DESCENDING))
 
 @app.get("/docs/all")
 async def get_all_docs():
@@ -126,7 +134,7 @@ async def search_document_by_text(search_text: str):
         search_text = search_transform(urlsafe_b64decode(search_text).decode())
     except Exception:
         raise HTTPException(status_code=404, detail="Invalid search text encoding, please encode with urlsafe/b64decode!")
-    return await mongolist(DB["docs"].find({"$text":{"$search":search_text}},{"_id":False}).sort("date",DESCENDING))
+    return await mongolist(DB["docs"].find(search_text,{"_id":False}).sort("date",DESCENDING))
 
 @app.get("/events/len")
 async def count_events():

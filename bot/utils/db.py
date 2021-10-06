@@ -227,6 +227,16 @@ def index_range(index_from,index_to):
         index_from, index_to = index_to, index_from
     return index_from, index_to
 
+def search_transform(s):
+    import re
+    res = []
+    keys = ["note","description","attachment.name"]
+    for k in keys:
+        res.append({k:{"$regex":"","$options":"gmi"}})
+        for ele in s.strip().split():
+            res[-1][k]["$regex"]+=f"(?=.*{re.escape(ele)})"
+    return {"$or":res}
+
 class Docs:
     @staticmethod
     def range(index_a,index_b):
@@ -239,8 +249,7 @@ class Docs:
     
     @staticmethod
     def search(str_search):
-        str_search = " ".join(['"'+ele.strip()+'"' for ele in str_search.strip().replace('"','').split() if ele.strip() not in ("",None)])
-        for ele in DB["docs"].find({"$text":{"$search":str_search}},{"_id":False, "match":True}).sort("date",DESCENDING):
+        for ele in DB["docs"].find(search_transform(str_search),{"_id":False, "match":True}).sort("date",DESCENDING):
             yield ele["match"]
 
     @staticmethod
