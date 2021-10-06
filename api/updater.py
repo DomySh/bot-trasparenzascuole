@@ -94,7 +94,6 @@ def db_init_collections():
         IndexModel([("date",ASCENDING)]),
         IndexModel([("note",ASCENDING)]),
         IndexModel([("description",ASCENDING)]),
-        IndexModel([("attachment.name",ASCENDING)])
     ])
     DB["pids"].create_indexes([
         IndexModel([("id",ASCENDING)],unique=True),

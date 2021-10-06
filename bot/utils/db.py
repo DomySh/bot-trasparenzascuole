@@ -16,9 +16,9 @@ class JCallbackHash:
         if not data is None:
             self.data = self._parse_data(data)
             self.hash = self._gen_hash(self.data)
-            if DB["callback_data_hash"].find_one({"hash":self.hash}) is None:
+            try:
                 DB["callback_data_hash"].insert_one({"hash":self.hash, "data":self.data, "created":datetime.now()})
-            else:
+            except DuplicateKeyError:
                 DB["callback_data_hash"].update_one({"hash":self.hash},{"$set":{"created":datetime.now()}})
         elif not hash is None:
             self.hash = hash
@@ -230,7 +230,7 @@ def index_range(index_from,index_to):
 def search_transform(s):
     import re
     res = []
-    keys = ["note","description","attachment.name"]
+    keys = ["note","description"]
     for k in keys:
         res.append({k:{"$regex":"","$options":"gmi"}})
         for ele in s.strip().split():

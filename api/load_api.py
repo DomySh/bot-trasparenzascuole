@@ -35,7 +35,7 @@ ahttp = httpx.AsyncClient()
 def search_transform(s):
     import re
     res = []
-    keys = ["note","description","attachment.name"]
+    keys = ["note","description"]
     for k in keys:
         res.append({k:{"$regex":"","$options":"gmi"}})
         for ele in s.strip().split():

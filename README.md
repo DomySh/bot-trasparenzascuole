@@ -1,4 +1,4 @@
-<h1><img align="left" src="doc/icon.png" width="70">[Testing/Developing] Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
+<h1><img align="left" src="doc/icon.png" width="70">[Testing/Dev] Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
 
 ---
 
@@ -89,7 +89,7 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 - Passaggio da programmazione tradizionali (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
     - Da Flask a FastAPI [Testing]
     - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]
-
+- Ricerca efficacie ma non efficiente! [Testing/Dev]
 Problemi sugli aggiornamenri
 - Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
 - Getsire Update molteplici in contemporanea (Bug rilevato) [Testing]
