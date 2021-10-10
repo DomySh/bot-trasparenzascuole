@@ -1,4 +1,4 @@
-<h1><img align="left" src="doc/icon.png" width="70">[Testing/Dev] Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
+<h1><img align="left" src="doc/icon.png" width="70">Piattaforma Web e Bot Telegram per trasparenzascuole.it</h1>
 
 ---
 
@@ -7,7 +7,7 @@ Questa piattaforma permette alla tua scuola di gestire i dati in trasparenzascuo
 
 Guarda la piattaforma in funzione! I.I.S.S Luigi dell'erba (Castellana Grotte):
 - https://iiss.domysh.com/
-- https://t.me/beta_circolaridellerbabot
+- https://t.me/circolaridellerbabot
 
 --- 
 
@@ -84,12 +84,7 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 
 ---
 
-## Note sul Testing [Fix e Aggiunte]:
-- Passaggio da programmazione tradizionale (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
-    - Da Flask a FastAPI [Testing]
-    - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]
+## Futuri Update:
 
-Problemi sugli aggiornamenri
-- Trovati update non percepiti sulle circolari (Aggiunta print e possibile fix) [Testing]
-- Getsire Update molteplici in contemporanea (Bug rilevato) [Testing]
----> Cambiato il Match ID  (nell'hash modificato l'inserimento della data) [Soluzione in prova!]
+- Passaggio da programmazione tradizionale (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
+    - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]

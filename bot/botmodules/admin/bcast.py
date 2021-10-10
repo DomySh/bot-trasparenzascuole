@@ -1,3 +1,4 @@
+from threading import Lock
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, MessageHandler, ConversationHandler, CallbackQueryHandler
 import time
@@ -51,18 +52,20 @@ def bcast_edit(update, user, data):
     update.message.edit_message_text(f"Ecco il messaggio che verrà mandato in broadcast 🌍\n---------------\n"+bcast_msg_build(data,user),reply_markup=bcast_keyb(data))
     return ConversationHandler.END
 
-global MESSAGES_SENDED, TIME_WAIT, MESSAGES_SENDED_CACHED
+global MESSAGES_SENDED, TIME_WAIT, MESSAGES_SENDED_CACHED, MSG_LOCK
 MESSAGES_SENDED = MESSAGES_SENDED_CACHED = TIME_WAIT = 0
+MSG_LOCK = Lock()
 
 def broadcast_message_send(user,update_msg,cbdata):
-    global MESSAGES_SENDED, TIME_WAIT, MESSAGES_SENDED_CACHED
+    global MESSAGES_SENDED, TIME_WAIT, MESSAGES_SENDED_CACHED, MSG_LOCK
     if user.id() == cbdata["id_to_skip"]: return 
     sendmsg(user.id(),bcast_msg_build(cbdata,user))
-    MESSAGES_SENDED+=1
-    if MESSAGES_SENDED_CACHED != MESSAGES_SENDED and time.time() < TIME_WAIT:
-        MESSAGES_SENDED_CACHED = MESSAGES_SENDED
-        update_msg(f"Sto inviando il messaggio (Inviato a {MESSAGES_SENDED_CACHED} utenti) 🌍")
-        TIME_WAIT = time.time() + 1
+    with MSG_LOCK:
+        MESSAGES_SENDED+=1
+        if MESSAGES_SENDED_CACHED != MESSAGES_SENDED and time.time() > TIME_WAIT:
+            MESSAGES_SENDED_CACHED = MESSAGES_SENDED
+            update_msg(f"Sto inviando il messaggio (Inviato a {MESSAGES_SENDED_CACHED} utenti) 🌍")
+            TIME_WAIT = time.time() + 1
 
 @msg(adm = "broadcast", jcallb=True)
 def bcast_accepted(update,user,data):
@@ -73,6 +76,7 @@ def bcast_accepted(update,user,data):
         try:
             MESSAGES_SENDED = MESSAGES_SENDED_CACHED = 0
             TIME_WAIT = time.time()
+            update.message.edit_message_text("Sto inviando i messaggi... 💬")
             with ThreadPoolExecutor(conf.BROADCAST_THREADING_LIMIT) as exec:
                 exec.map(lambda x: broadcast_message_send(x,update.message.edit_message_text,data),db.TelegramUser.get_all_users())
             update.message.edit_message_text("Il messaggio è stato inviato a tutti! 💬")

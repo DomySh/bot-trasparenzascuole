@@ -48,7 +48,6 @@ def check_updates():
     updates = db.Events.update(get_cached_events_len())
     if len(updates) == 0: return 
     conf.settings("events_len",db.Events.length())
-    print(updates)
     docs_update = []
     deleted_match = []
     for update in updates:
