@@ -2,35 +2,50 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import DESCENDING, ASCENDING
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
-import os, re, uvicorn, httpx
+import os, re, uvicorn, asyncio, aiofiles, httpx
 from pathlib import Path
 from base64 import urlsafe_b64decode
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from fastapi.background import BackgroundTasks
-from threading import Lock
-
-def ctrl_env(env_id,msg):
-    if env_id not in os.environ or os.environ[env_id].strip() == "":
-        raise Exception(msg)
-
-ctrl_env("API_AXIOS_DATA_LINK","Insert the public address of this site at API_AXIOS_DATA_LINK")
 
 PUBLIC_LINK = os.environ["API_AXIOS_DATA_LINK"].strip()
 if PUBLIC_LINK.endswith("/"): PUBLIC_LINK = PUBLIC_LINK[:-1]
-MONGO_URL = "mongodb://mongo/"
-DB_CONN = AsyncIOMotorClient(MONGO_URL)
-DB = DB_CONN["main"]
+
+
+DB_CONN = None
+DBNAME = "main"
+if os.getenv("EXTERNAL_MONGO","False").lower() in ("true","t","y","yes","1"):
+    IP_MONGO_AUTH = os.environ["IP_MONGO_AUTH"]
+    PORT_MONGO_AUTH = int(os.environ["PORT_MONGO_AUTH"])
+    DBNAME = os.environ["DBNAME_MONGO_AUTH"]
+    if os.getenv("EXTERNAL_MONGO_AUTH","False").lower() in ("true","t","y","yes","1"):   
+        DB_CONN = AsyncIOMotorClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH,
+            username=os.environ["USER_MONGO_AUTH"],
+            password=os.environ["PSW_MONGO_AUTH"],
+        )
+    else:
+        DB_CONN = AsyncIOMotorClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH
+        )
+else: 
+    DB_CONN = AsyncIOMotorClient("mongodb://mongo/")
+DB = DB_CONN[DBNAME]
+
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
 CORS_DISABLED = os.getenv("CORS_DISABLED","False").lower() in ("true","t","y","yes","1")
 DEBUG = os.getenv("DEBUG","False").lower() in ("true","t","y","yes","1")
 THREADS = int(os.getenv("THREADS",3))
+
 app = FastAPI(debug=DEBUG)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates_obj = Jinja2Templates(directory="templates")
 render = templates_obj.TemplateResponse
-ahttp = httpx.AsyncClient()
+httpc = httpx.AsyncClient()
 
 def search_transform(s):
     return {"$text":{"$search":" ".join(['"'+ele.strip()+'"' for ele in s.strip().replace('"','').split() if ele.strip() not in ("",None)])}}
@@ -188,7 +203,40 @@ async def pdf_viewer(request: Request, match_id: str):
         return render("pdf_view_err.html",{"request": request, "public_url": PUBLIC_LINK})
     return render("viewer.html", {"request": request, "doc": doc, "public_url": PUBLIC_LINK})
 
-lock_download_file = Lock()
+lock_download_file = asyncio.Lock()
+lock_match = {}
+
+async def download_doc(url,path_file):
+    req = httpc.build_request("GET",url)
+    resp = await httpc.send(req, stream=True)
+    async with aiofiles.open(path_file,"wb") as f:
+        async for chunk in resp.aiter_bytes():
+            await f.write(chunk)
+
+async def add_download_lock(match_id):
+    async with lock_download_file:
+        if match_id in lock_match.keys():
+            lock_match[match_id]["count"]+=1
+            await lock_match[match_id]["lock"].acquire()
+            return False
+        else:
+            lock_match[match_id] = {"lock":asyncio.Lock(),"count":1}
+            await lock_match[match_id]["lock"].acquire()
+            return True
+
+async def remove_download_lock(match_id):
+    async with lock_download_file:
+        if match_id in lock_match.keys():
+            lock_match[match_id]["lock"].release()
+            if lock_match[match_id]["count"] > 0:
+                lock_match[match_id]["count"]-=1
+            if lock_match[match_id]["count"] <= 0:
+                del lock_match[match_id]
+
+async def aioproxy_stream(url):
+    req = httpc.build_request("GET",url)
+    resp = await httpc.send(req, stream=True)
+    return StreamingResponse(resp.aiter_bytes(),media_type=resp.headers['content-type'], status_code=resp.status_code)
 
 @app.get('/download/{match_id}')
 async def download_attachments(match_id: str):
@@ -202,9 +250,9 @@ async def download_attachments(match_id: str):
         if re.match(r"^[a-zA-Z0-9-_]*$",match_id):
             path_file = str(Path(__file__).parent.absolute() / "data" / (match_id+".pdf"))
             if not os.path.exists(path_file):
-                with lock_download_file:
-                    with open(path_file,"wb") as f:
-                        f.write(httpx.get(doc["attachment"]["download"]).content)
+                if await add_download_lock(match_id):
+                    await download_doc(doc["attachment"]["download"],path_file)
+                await remove_download_lock(match_id)
             filename = doc["attachment"]["name"]
             if filename is None:
                 filename = match_id+".pdf"
@@ -212,9 +260,7 @@ async def download_attachments(match_id: str):
         else:
             raise HTTPException(status_code=404, detail="Invalid match id!")
     else:
-        req = ahttp.build_request("GET",doc["attachment"]["download"])
-        r = await ahttp.send(req, stream=True)
-        return StreamingResponse(r.aiter_bytes(), background=BackgroundTasks([r.aclose]),media_type=r.headers['content-type'], status_code=r.status_code)
+        return await aioproxy_stream(doc["attachment"]["download"])
 
 @app.get("/")
 async def web_view(request: Request):

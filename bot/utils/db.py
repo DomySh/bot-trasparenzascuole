@@ -1,13 +1,32 @@
-import random, string, json
+import random, string, json, os
 from hashlib import sha256
 from pymongo import MongoClient, IndexModel, ASCENDING, DESCENDING
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime
 from base64 import b64encode
 
-MONGO_URL = "mongodb://mongo/"
-DB_CONN = MongoClient(MONGO_URL)
-DB = DB_CONN["main"]
+DB_CONN = None
+DBNAME = "main"
+if os.getenv("EXTERNAL_MONGO","False").lower() in ("true","t","y","yes","1"):
+    IP_MONGO_AUTH = os.environ["IP_MONGO_AUTH"]
+    PORT_MONGO_AUTH = int(os.environ["PORT_MONGO_AUTH"])
+    DBNAME = os.environ["DBNAME_MONGO_AUTH"]
+    if os.getenv("EXTERNAL_MONGO_AUTH","False").lower() in ("true","t","y","yes","1"):
+        DB_CONN = MongoClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH,
+            username=os.environ["USER_MONGO_AUTH"],
+            password=os.environ["PSW_MONGO_AUTH"],
+        )
+    else:
+        DB_CONN = MongoClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH
+        )
+else:
+    DB_CONN = MongoClient("mongodb://mongo/")
+DB = DB_CONN[DBNAME]
+
 MANDATORY_TIME_LIMIT = 5
 MANDATORY_DIGITS = 6
 

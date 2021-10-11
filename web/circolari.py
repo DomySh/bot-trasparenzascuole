@@ -7,14 +7,6 @@ from hashlib import md5
 from base64 import urlsafe_b64encode
 from datetime import datetime
 
-
-def ctrl_env(env_id,msg):
-    if env_id not in os.environ or os.environ[env_id].strip() == "":
-        raise Exception(msg)
-
-ctrl_env("AXIOS_CUSTOMER_ID", "AXIOS_CUSTOMER_ID is needed by the updater! Please insert an AXIOS customer id to be syncronised")
-selected_school = os.environ["AXIOS_CUSTOMER_ID"]
-
 class AxiosApiError(Exception):pass
 
 class Bacheca:
@@ -34,7 +26,7 @@ class Bacheca:
 
 
 class TrasparenzeScuoleMap:
-    def __init__(self, customer_id=selected_school, download_pid_list=False, download_school_name=False):
+    def __init__(self, customer_id, download_pid_list=False, download_school_name=False):
         self.customer_id = customer_id
         if download_pid_list:
             self.download_pid_list()
@@ -238,4 +230,4 @@ class BachecaDataParser:
             return None    
 
 if __name__ == "__main__":
-    print(TrasparenzeScuoleMap().download_data())
+    print(TrasparenzeScuoleMap(os.environ["AXIOS_CUSTOMER_ID"]).download_data())

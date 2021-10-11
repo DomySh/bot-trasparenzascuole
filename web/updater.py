@@ -3,13 +3,33 @@ import circolari, os, traceback, time
 from pymongo import MongoClient, IndexModel, ASCENDING, TEXT
 from pathlib import Path
 
-MONGO_URL = "mongodb://mongo/"
-DB_CONN = MongoClient(MONGO_URL)
-DB = DB_CONN["main"]
-AXIOS = circolari.TrasparenzeScuoleMap()
+
+AXIOS = circolari.TrasparenzeScuoleMap(os.environ["AXIOS_CUSTOMER_ID"])
 AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*1))
 UPDATE_FREQUENCY = int(os.getenv("AXIOS_UPDATER_FREQUENCY",60*3))
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
+
+DB_CONN = None
+DBNAME = "main"
+if os.getenv("EXTERNAL_MONGO","False").lower() in ("true","t","y","yes","1"):
+    IP_MONGO_AUTH = os.environ["IP_MONGO_AUTH"]
+    PORT_MONGO_AUTH = int(os.environ["PORT_MONGO_AUTH"])
+    DBNAME = os.environ["DBNAME_MONGO_AUTH"]
+    if os.getenv("EXTERNAL_MONGO_AUTH","False").lower() in ("true","t","y","yes","1"):
+        DB_CONN = MongoClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH,
+            username=os.environ["USER_MONGO_AUTH"],
+            password=os.environ["PSW_MONGO_AUTH"],
+        )
+    else:
+        DB_CONN = MongoClient(
+            host=IP_MONGO_AUTH,
+            port=PORT_MONGO_AUTH
+        )
+else: 
+    DB_CONN = MongoClient("mongodb://mongo/")
+DB = DB_CONN[DBNAME]
 """
 DB data managment
 docs:

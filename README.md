@@ -85,6 +85,4 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 ---
 
 ## Futuri Update:
-
-- Passaggio da programmazione tradizionale (Richieste bloccanti) alla programmazione asincrona (Richieste non bloccanti):
-    - Bot telegram (è possibile che ci sia un cambio di libreria) [Bloccata]
+- Bot telegram: Riscrittura del codice con la libreria (AIOgram)[https://github.com/aiogram/aiogram]

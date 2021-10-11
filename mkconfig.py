@@ -4,21 +4,16 @@ import re, os
 yaml_json = {
     "version":"'3.9'",
     "services":{
-        "mongo":{
-            "image":"mongo:4",
-            "restart":"unless-stopped",
-            "volumes":["./mongodbdata:/data/db"]
-        },
+        
         "bot":{
             "restart":"unless-stopped",
             "build":"./bot",
-            "depends_on":["api","mongo"],
+            "depends_on":["api"],
             "environment":[]
         },
         "api":{
             "restart":"unless-stopped",
             "build":"./api",
-            "depends_on":["mongo"],
             "environment":[]
         }
     }
@@ -27,7 +22,6 @@ yaml_json = {
 global API_PORT
 
 API_PORT = None
-
 
 def y_or_n(default=False):
     while True:
@@ -39,6 +33,90 @@ def y_or_n(default=False):
             return res[0] == "y"
         else:
             print("Inserisci 'y' o 'n'")
+
+def get_mongo_ip():
+    while True:
+        print("[[ IP_MONGO_AUTH ]]\nInserisci l'ip del database mongodb (Senza numero di porta)")
+        res = input("> ")
+        if res.strip() != "":
+            res = res.strip()
+            yaml_json["services"]["bot"]["environment"].append(f"IP_MONGO_AUTH={res}")
+            yaml_json["services"]["api"]["environment"].append(f"IP_MONGO_AUTH={res}")
+            break 
+
+def get_mongo_port():
+    while True:
+        print("[[ PORT_MONGO_AUTH ]]\nInserisci la porta su cui è avviato mongodb")
+        res = input("(Default=27017)> ")
+        if res.strip() == "": res = "27017"
+        if res.isdecimal() and int(res)>=0 and int(res)<=65535:
+            yaml_json["services"]["bot"]["environment"].append(f"PORT_MONGO_AUTH={int(res)}")
+            yaml_json["services"]["api"]["environment"].append(f"PORT_MONGO_AUTH={int(res)}")
+            break 
+
+def mongo_auth_user():
+    while True:
+        print("[[ USER_MONGO_AUTH ]]\nInserisci il nome utente con cui autenticarti")
+        res = input("> ")
+        if res.strip() != "":
+            res = res.strip()
+            yaml_json["services"]["bot"]["environment"].append(f"USER_MONGO_AUTH={res}")
+            yaml_json["services"]["api"]["environment"].append(f"USER_MONGO_AUTH={res}")
+            break  
+
+def mongo_auth_psw():
+    while True:
+        print("[[ PSW_MONGO_AUTH ]]\nInserisci la password dell'utente")
+        res = input("> ")
+        if res.strip() != "":
+            res = res.strip()
+            yaml_json["services"]["bot"]["environment"].append(f"PSW_MONGO_AUTH={res}")
+            yaml_json["services"]["api"]["environment"].append(f"PSW_MONGO_AUTH={res}")
+            break 
+    
+
+def mongo_auth_dbname():
+    while True:
+        print("[[ DBNAME_MONGO_AUTH ]]\nInserisci il nome del database da utilizzare")
+        res = input("> ").strip()
+        if res != "":
+            yaml_json["services"]["bot"]["environment"].append(f"DBNAME_MONGO_AUTH={res}")
+            yaml_json["services"]["api"]["environment"].append(f"DBNAME_MONGO_AUTH={res}") 
+            break
+    
+
+def mongo_auth():
+    print("Vuoi accedere al server mongodb con un username e password?")
+    if y_or_n(True):
+        yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO_AUTH=1")
+        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO_AUTH=1")
+        mongo_auth_user()
+        mongo_auth_psw()
+    else:
+        yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO_AUTH=0")
+        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO_AUTH=0")
+
+
+def mongodb_conn():
+    print("Vuoi utilizzare un database mongodb generato con un container docker?")
+    if y_or_n(True):
+        yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=0")
+        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO=0")
+        yaml_json["services"]["mongo"] = {
+            "image":"mongo:4",
+            "restart":"unless-stopped",
+            "volumes":["./mongodbdata:/data/db"]
+        }
+        yaml_json["services"]["api"]["depends_on"]=["mongo"]
+        yaml_json["services"]["bot"]["depends_on"].append("mongo")
+
+    else:
+        yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=1")
+        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO=1")
+        get_mongo_ip()
+        get_mongo_port()
+        mongo_auth_dbname()
+        mongo_auth()
 
 def get_admin_id():
     while True:
@@ -62,8 +140,8 @@ def threads_for_broadcast():
 vengono utilizzati i thread, pertanto si può impostare un numero di thread da utilizzare in questi 
 casi per l'invio dei messaggi, tramite questo parametro. Imposta il valore in base alle potenzialità
 della tuo server.""")
-        res = input("(Default=1) > ")
-        if res == "": res = "1"
+        res = input("(Default=3) > ")
+        if res == "": res = "3"
         if res.isdecimal() and int(res)>=1 and int(res)<=100:
             yaml_json["services"]["bot"]["environment"].append(f"THREAD_FOR_BROADCASTING={int(res)}")
             break
@@ -72,10 +150,10 @@ def webhook_choose():
     print("[[ USE_TELEGRAM_WEHOOK ]]\nVuoi utilizzare i WebHook per il bot telegram?\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/doc/TG_WEBHOOK.md")
     if y_or_n(True):
         yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
-        return True
+        webhook_port()
+        webhook_url()
     else:
         yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
-        return False
 
 
 def set_debug():
@@ -85,9 +163,10 @@ def set_debug():
         yaml_json["services"]["api"]["environment"].append("DEBUG=1")
         yaml_json["services"]["api"]["volumes"]=["./api/:/execute/"]
         yaml_json["services"]["bot"]["volumes"]=["./bot/:/execute/"]
-        yaml_json["services"]["mongo"]["ports"]=["127.0.0.1:27017:27017"]
+        if "mongo" in yaml_json["services"].keys():
+            yaml_json["services"]["mongo"]["ports"]=["127.0.0.1:27017:27017"]
         yaml_json["services"]["api"]["environment"].append("API_CACHE_ATTACHMENTS=0")
-        yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
+        yaml_json["services"]["bot"]["environment"].append("TG_BOT_USE_WEBHOOK=0")
         global API_PORT
         yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL=http://127.0.0.1:{API_PORT}/")
         yaml_json["services"]["api"]["environment"].append(f"API_AXIOS_DATA_LINK=http://127.0.0.1:{API_PORT}/")
@@ -197,11 +276,22 @@ def bot_threads():
 def api_threads():
     while True:
         print("[[ API_THREADS ]]\nScegli quanti thread dedicare alla piattaforma web")
-        res = input("(DEFAULT=3)> ")
-        if res == "": res = "3"
+        res = input("(DEFAULT=1)> ")
+        if res == "": res = "1"
         if res.isdecimal() and int(res)>0 and int(res)<=100:
             yaml_json["services"]["api"]["environment"].append(f"THREADS={int(res)}")
             break
+
+def ask_for_threads():
+    print("Vuoi personalizzare il numero di thread da utilizzare per la piattaforma? (Consigliato se è presente una grande utenza)")
+    if y_or_n(False):
+        bot_threads()
+        api_threads()
+        threads_for_broadcast()
+    else:
+        yaml_json["services"]["bot"]["environment"].append("THREADS=4")
+        yaml_json["services"]["api"]["environment"].append("THREADS=1")
+        yaml_json["services"]["bot"]["environment"].append(f"THREAD_FOR_BROADCASTING=3")
 
 def updater_frequency():
     while True:
@@ -211,8 +301,7 @@ def updater_frequency():
         if not res.isdecimal(): continue
         if int(res)>=1 and int(res)<=60*24:
             yaml_json["services"]["api"]["environment"].append(f"AXIOS_UPDATER_FREQUENCY={int(res)*60}")
-            break
-    
+            break    
 
 def from_json_to_yml(json_data:dict):
     yml = ""
@@ -229,6 +318,13 @@ def from_json_to_yml(json_data:dict):
                 yml+=f"    - {ele}\n"
     return yml
 
+def basic_infos():
+    get_bot_token()
+    get_admin_id()
+    axios_customer_id()
+    web_platform_port()
+    mongodb_conn()
+
 def handle():
     
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -237,19 +333,12 @@ def handle():
         if not y_or_n(False):
             exit()
 
-    get_bot_token()
-    get_admin_id()
-    axios_customer_id()
-    web_platform_port()
+    basic_infos()
     if not set_debug():
         api_public_link()
-        if webhook_choose():
-            webhook_port()
-            webhook_url()
+        webhook_choose()   
         cache_attachments()
-        bot_threads()
-        api_threads()
-        threads_for_broadcast()
+        ask_for_threads()
         updater_frequency()
         send_alerts_to_admin()
         cors_disabled()
