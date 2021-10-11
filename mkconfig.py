@@ -8,12 +8,14 @@ yaml_json = {
         "bot":{
             "restart":"unless-stopped",
             "build":"./bot",
-            "environment":[]
+            "environment":[],
+            "extra_hosts":["host.docker.internal:host-gateway"]
         },
         "web":{
             "restart":"unless-stopped",
             "build":"./web",
-            "environment":[]
+            "environment":[],
+            "extra_hosts":["host.docker.internal:host-gateway"]
         }
     }
 }
@@ -39,6 +41,8 @@ def get_mongo_ip():
         res = input("> ")
         if res.strip() != "":
             res = res.strip()
+            if res.lower() in ("localhost","127.0.0.1"):
+                res = "host.docker.internal:host-gateway"
             yaml_json["services"]["bot"]["environment"].append(f"IP_MONGO_AUTH={res}")
             yaml_json["services"]["web"]["environment"].append(f"IP_MONGO_AUTH={res}")
             break 
