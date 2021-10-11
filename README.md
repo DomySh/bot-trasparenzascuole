@@ -85,4 +85,4 @@ Il progetto è basato su [docker](https://www.docker.com/) che permette di avere
 ---
 
 ## Futuri Update:
-- Bot telegram: Riscrittura del codice con la libreria (AIOgram)[https://github.com/aiogram/aiogram]
+- Bot telegram: Riscrittura del codice con la libreria [AIOgram](https://github.com/aiogram/aiogram)
