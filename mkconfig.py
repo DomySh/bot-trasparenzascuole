@@ -8,12 +8,11 @@ yaml_json = {
         "bot":{
             "restart":"unless-stopped",
             "build":"./bot",
-            "depends_on":["api"],
             "environment":[]
         },
-        "api":{
+        "web":{
             "restart":"unless-stopped",
-            "build":"./api",
+            "build":"./web",
             "environment":[]
         }
     }
@@ -41,7 +40,7 @@ def get_mongo_ip():
         if res.strip() != "":
             res = res.strip()
             yaml_json["services"]["bot"]["environment"].append(f"IP_MONGO_AUTH={res}")
-            yaml_json["services"]["api"]["environment"].append(f"IP_MONGO_AUTH={res}")
+            yaml_json["services"]["web"]["environment"].append(f"IP_MONGO_AUTH={res}")
             break 
 
 def get_mongo_port():
@@ -51,7 +50,7 @@ def get_mongo_port():
         if res.strip() == "": res = "27017"
         if res.isdecimal() and int(res)>=0 and int(res)<=65535:
             yaml_json["services"]["bot"]["environment"].append(f"PORT_MONGO_AUTH={int(res)}")
-            yaml_json["services"]["api"]["environment"].append(f"PORT_MONGO_AUTH={int(res)}")
+            yaml_json["services"]["web"]["environment"].append(f"PORT_MONGO_AUTH={int(res)}")
             break 
 
 def mongo_auth_user():
@@ -61,7 +60,7 @@ def mongo_auth_user():
         if res.strip() != "":
             res = res.strip()
             yaml_json["services"]["bot"]["environment"].append(f"USER_MONGO_AUTH={res}")
-            yaml_json["services"]["api"]["environment"].append(f"USER_MONGO_AUTH={res}")
+            yaml_json["services"]["web"]["environment"].append(f"USER_MONGO_AUTH={res}")
             break  
 
 def mongo_auth_psw():
@@ -71,7 +70,7 @@ def mongo_auth_psw():
         if res.strip() != "":
             res = res.strip()
             yaml_json["services"]["bot"]["environment"].append(f"PSW_MONGO_AUTH={res}")
-            yaml_json["services"]["api"]["environment"].append(f"PSW_MONGO_AUTH={res}")
+            yaml_json["services"]["web"]["environment"].append(f"PSW_MONGO_AUTH={res}")
             break 
     
 
@@ -81,7 +80,7 @@ def mongo_auth_dbname():
         res = input("> ").strip()
         if res != "":
             yaml_json["services"]["bot"]["environment"].append(f"DBNAME_MONGO_AUTH={res}")
-            yaml_json["services"]["api"]["environment"].append(f"DBNAME_MONGO_AUTH={res}") 
+            yaml_json["services"]["web"]["environment"].append(f"DBNAME_MONGO_AUTH={res}") 
             break
     
 
@@ -89,30 +88,30 @@ def mongo_auth():
     print("Vuoi accedere al server mongodb con un username e password?")
     if y_or_n(True):
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO_AUTH=1")
-        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO_AUTH=1")
+        yaml_json["services"]["web"]["environment"].append("EXTERNAL_MONGO_AUTH=1")
         mongo_auth_user()
         mongo_auth_psw()
     else:
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO_AUTH=0")
-        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO_AUTH=0")
+        yaml_json["services"]["web"]["environment"].append("EXTERNAL_MONGO_AUTH=0")
 
 
 def mongodb_conn():
     print("Vuoi utilizzare un database mongodb generato con un container docker?")
     if y_or_n(True):
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=0")
-        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO=0")
+        yaml_json["services"]["web"]["environment"].append("EXTERNAL_MONGO=0")
         yaml_json["services"]["mongo"] = {
             "image":"mongo:4",
             "restart":"unless-stopped",
             "volumes":["./mongodbdata:/data/db"]
         }
-        yaml_json["services"]["api"]["depends_on"]=["mongo"]
-        yaml_json["services"]["bot"]["depends_on"].append("mongo")
+        yaml_json["services"]["web"]["depends_on"]=["mongo"]
+        yaml_json["services"]["bot"]["depends_on"]=["mongo"]
 
     else:
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=1")
-        yaml_json["services"]["api"]["environment"].append("EXTERNAL_MONGO=1")
+        yaml_json["services"]["web"]["environment"].append("EXTERNAL_MONGO=1")
         get_mongo_ip()
         get_mongo_port()
         mongo_auth_dbname()
@@ -160,26 +159,26 @@ def set_debug():
     print("[[ DEBUG ]]\nVuoi creare una configurazione per DEBUG?\nQuesta funzionerà disattiverà il webhook e attiverà in automatico la console di debug di flask, e la modalità di manutenzione.")
     if y_or_n(False):
         yaml_json["services"]["bot"]["environment"].append("DEBUG=1")
-        yaml_json["services"]["api"]["environment"].append("DEBUG=1")
-        yaml_json["services"]["api"]["volumes"]=["./api/:/execute/"]
+        yaml_json["services"]["web"]["environment"].append("DEBUG=1")
+        yaml_json["services"]["web"]["volumes"]=["./web/:/execute/"]
         yaml_json["services"]["bot"]["volumes"]=["./bot/:/execute/"]
         if "mongo" in yaml_json["services"].keys():
             yaml_json["services"]["mongo"]["ports"]=["127.0.0.1:27017:27017"]
-        yaml_json["services"]["api"]["environment"].append("API_CACHE_ATTACHMENTS=0")
+        yaml_json["services"]["web"]["environment"].append("API_CACHE_ATTACHMENTS=0")
         yaml_json["services"]["bot"]["environment"].append("TG_BOT_USE_WEBHOOK=0")
         global API_PORT
         yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL=http://127.0.0.1:{API_PORT}/")
-        yaml_json["services"]["api"]["environment"].append(f"API_AXIOS_DATA_LINK=http://127.0.0.1:{API_PORT}/")
-        yaml_json["services"]["api"]["environment"].append("THREADS=1")
+        yaml_json["services"]["web"]["environment"].append(f"API_AXIOS_DATA_LINK=http://127.0.0.1:{API_PORT}/")
+        yaml_json["services"]["web"]["environment"].append("THREADS=1")
         yaml_json["services"]["bot"]["environment"].append("THREADS=1")
         yaml_json["services"]["bot"]["environment"].append("THREAD_FOR_BROADCASTING=1")
-        yaml_json["services"]["api"]["environment"].append("AXIOS_UPDATER_FREQUENCY=60")
+        yaml_json["services"]["web"]["environment"].append("AXIOS_UPDATER_FREQUENCY=60")
         yaml_json["services"]["bot"]["environment"].append(f"SEND_EXCEPTION_ADVICE_TO_ADMIN=1")
-        yaml_json["services"]["api"]["environment"].append(f"CORS_DISABLED=1")
+        yaml_json["services"]["web"]["environment"].append(f"CORS_DISABLED=1")
         return True
     else:
         yaml_json["services"]["bot"]["environment"].append("DEBUG=0")
-        yaml_json["services"]["api"]["environment"].append("DEBUG=0")
+        yaml_json["services"]["web"]["environment"].append("DEBUG=0")
         return False
 
 def api_public_link():
@@ -188,7 +187,7 @@ def api_public_link():
         res = input("> ")
         if re.match(r"^http(s)?:\/\/[(?a-zA-Z0-9@:%._\+~#=]+\.[a-z]{2,}(\/)?$",res):
             yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL={res}")
-            yaml_json["services"]["api"]["environment"].append(f"API_AXIOS_DATA_LINK={res}")
+            yaml_json["services"]["web"]["environment"].append(f"API_AXIOS_DATA_LINK={res}")
             break
 
 def cache_attachments():
@@ -198,10 +197,10 @@ Attivando questa opzione nella cartella che si creerà all'avvio del progetto (.
 verranno scaricati i pdf che sono richiesti, solo per la prima volta in cui saranno richiesti,
 a seguito i PDF saranno indipendenti dalla piattaform axios.""")
     if y_or_n(True):
-        yaml_json["services"]["api"]["environment"].append(f"API_CACHE_ATTACHMENTS=1")
-        yaml_json["services"]["api"]["volumes"]=["./pdffiles:/execute/data"]
+        yaml_json["services"]["web"]["environment"].append(f"API_CACHE_ATTACHMENTS=1")
+        yaml_json["services"]["web"]["volumes"]=["./pdffiles:/execute/data"]
     else:
-        yaml_json["services"]["api"]["environment"].append(f"API_CACHE_ATTACHMENTS=0")
+        yaml_json["services"]["web"]["environment"].append(f"API_CACHE_ATTACHMENTS=0")
 
 def webhook_url():
     while True:
@@ -226,9 +225,9 @@ di default queste non sono accessibili da domini differenti da quello in cui è 
 Per disattivare i controlli di sicurezza cors al fine di utilizzare le API della piattaforma per applicativi
 abilita questa opzione.""")
     if y_or_n(False):
-        yaml_json["services"]["api"]["environment"].append(f"CORS_DISABLED=1")
+        yaml_json["services"]["web"]["environment"].append(f"CORS_DISABLED=1")
     else:
-        yaml_json["services"]["api"]["environment"].append(f"CORS_DISABLED=0")
+        yaml_json["services"]["web"]["environment"].append(f"CORS_DISABLED=0")
 
 def web_platform_port():
     global API_PORT
@@ -238,7 +237,7 @@ def web_platform_port():
         if res == "": res = "8080"
         if res.isdecimal() and int(res)>=0 and int(res)<=65535:
             API_PORT = int(res)
-            yaml_json["services"]["api"]["ports"]=[f"127.0.0.1:{int(res)}:9999"]
+            yaml_json["services"]["web"]["ports"]=[f"127.0.0.1:{int(res)}:9999"]
             break
 
 def webhook_port():
@@ -260,7 +259,7 @@ def axios_customer_id():
         else:
             res = None
         if res:
-            yaml_json["services"]["api"]["environment"].append(f"AXIOS_CUSTOMER_ID={res}")
+            yaml_json["services"]["web"]["environment"].append(f"AXIOS_CUSTOMER_ID={res}")
             break
 
 def bot_threads():
@@ -279,7 +278,7 @@ def api_threads():
         res = input("(DEFAULT=1)> ")
         if res == "": res = "1"
         if res.isdecimal() and int(res)>0 and int(res)<=100:
-            yaml_json["services"]["api"]["environment"].append(f"THREADS={int(res)}")
+            yaml_json["services"]["web"]["environment"].append(f"THREADS={int(res)}")
             break
 
 def ask_for_threads():
@@ -290,7 +289,7 @@ def ask_for_threads():
         threads_for_broadcast()
     else:
         yaml_json["services"]["bot"]["environment"].append("THREADS=4")
-        yaml_json["services"]["api"]["environment"].append("THREADS=1")
+        yaml_json["services"]["web"]["environment"].append("THREADS=1")
         yaml_json["services"]["bot"]["environment"].append(f"THREAD_FOR_BROADCASTING=3")
 
 def updater_frequency():
@@ -300,7 +299,7 @@ def updater_frequency():
         if res == "": res = "2"
         if not res.isdecimal(): continue
         if int(res)>=1 and int(res)<=60*24:
-            yaml_json["services"]["api"]["environment"].append(f"AXIOS_UPDATER_FREQUENCY={int(res)*60}")
+            yaml_json["services"]["web"]["environment"].append(f"AXIOS_UPDATER_FREQUENCY={int(res)*60}")
             break    
 
 def from_json_to_yml(json_data:dict):
