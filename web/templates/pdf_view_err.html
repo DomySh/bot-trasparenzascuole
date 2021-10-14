@@ -5,6 +5,7 @@
 	<link href="/static/icon.png" rel="icon" type="image/png" />
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" href="/static/css/weberr.css" />	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Darkmode.js/1.5.7/darkmode-js.min.js" referrerpolicy="no-referrer"></script>
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="Lettore Documenti">
 	<meta property="og:description" content="Lettore PDF">
@@ -18,16 +19,23 @@
 </head>
 
 <body>
-	<div class="overlay all" id="init_load_div">
-		<div class="tot-centered2">
-			<h2 style="color:yellow;">⚠️ Ops! Si è verificato un problema!</h2>
-			{% if msg %}
-				<b>{{ msg }}</b>
-			{% else %}
-				<b>La circolare potrebbe essere stata eliminata o il link non è valido!</b>
-			{% endif %}
-			
-		</div>
+	<script>
+        const darkmode = new Darkmode({
+            mixColor: '#BBB',
+			backgroundColor: '#EEE',
+            buttonColorDark: '#333',
+            label: '🌓',
+        });
+        darkmode.showWidget();
+    </script>
+	<div class="tot-centered">
+		<h2 class="title-err">⚠️ <u>Ops! Si è verificato un problema!</u></h2>
+		{% if msg %}
+			<b>{{ msg }}</b>
+		{% else %}
+			<b>La circolare potrebbe essere stata eliminata o il link non è valido!</b>
+		{% endif %}
+		
 	</div>
 	
 </body>

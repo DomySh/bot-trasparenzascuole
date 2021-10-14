@@ -71,7 +71,7 @@ def broadcast_message_send(user,update_msg,cbdata):
 def bcast_accepted(update,user,data):
     global MESSAGES_SENDED, TIME_WAIT, MESSAGES_SENDED_CACHED
     if conf.BCAST_LOCK.locked():
-        update.message.reply_text("Il bot sta già inviando un'altro messaggio, questo messaggio verrà inviato appena possibile! 💬\nNel frattempo non sarà possibile usare il bot 😤")
+        update.message.edit_message_text("Il bot sta già inviando un'altro messaggio, questo messaggio verrà inviato appena possibile! 💬\nNel frattempo non sarà possibile usare il bot 😤")
     with conf.BCAST_LOCK:
         try:
             MESSAGES_SENDED = MESSAGES_SENDED_CACHED = 0

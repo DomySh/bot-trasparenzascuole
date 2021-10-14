@@ -138,8 +138,10 @@ def update_settings(settings):
 def update_pids(settings):
     pids = AXIOS.pids()
     for ele in DB["pids"].find({"id":{"$nin":[ele.id for ele in pids]}}):
+        if API_CACHE_ATTACHMENTS:
+            for doc_to_del in DB["docs"].find({"pid":ele["id"]}):
+                delete_data_file(doc_to_del["match"])
         DB["docs"].delete_many({"pid":ele["id"]})
-        DB["docs_events"].delete_many({"pid":ele["id"]})
     DB["pids"].delete_many({"id":{"$nin":[ele.id for ele in pids]}})
     synced_pids =  [ele["pid"] for ele in list(DB["pids"].find({}))]
     for pid in pids:

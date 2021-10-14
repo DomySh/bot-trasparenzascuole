@@ -185,14 +185,13 @@ function build_tag(doc) {
         date = new Date(date).toLocaleString('it-IT');
     }
     let text = `<div class="doc_div">
-        <div class="circ_n_doc">
         <h5 class="pid_doc">${get_pid_name_by_id(doc.pid)}<span class="put_right">📝</span></h5>
         <p class="note"><b>📓 Note:</b> ${doc.note != null ? esc(doc.note): "<u>Nessuna nota disponibie!</u>" }</p>
         <p class="descript"><b>🔥 Descrizione:</b> ${doc.description != null ? esc(doc.description): "<u>Nessuna descrizione disponibie!</u>" }</p>
         <p class="date_doc"><b>🗓️ Pubblicata il:</b> ${date != null ? esc(date) : "<u>Data non disponibile!</u>"}</p>
         <a target="_blank" href="${quoteattr("/view/"+doc.match)}" class="download-btn-show">Lettore PDF</a>
         <span class="put_right">
-        <a target="_blank" href="${quoteattr(doc.download)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
+        <a target="_blank" href="${quoteattr(doc.attachment.download)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
         </span>
         </div>`
     return $(text)[0]

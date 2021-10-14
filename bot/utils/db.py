@@ -290,7 +290,7 @@ class FeedMsg:
     
     @staticmethod
     def get_msg_feed(match_id):
-        res = DB["feed_msg"].find_one_and_delete({"match":match_id})
+        res = DB["feed_msg"].find_one({"match":match_id})
         if res is None:
             return []
         else:

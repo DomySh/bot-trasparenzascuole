@@ -1,13 +1,6 @@
 import os
 from threading import Lock
 
-def ctrl_env(env_id,msg):
-    if env_id not in os.environ or os.environ[env_id].strip() == "":
-        raise Exception(msg)
-
-ctrl_env("TG_ADMIN_ID","TG_ADMIN_ID is required to be in envirnoment! Put a valid telegram user id that will be the main admin")
-ctrl_env("TG_BOT_TOKEN","TG_BOT_TOKEN is required to be in environment! Put a valid telegram Bot token!")
-
 ADMIN_ID = int(os.environ["TG_ADMIN_ID"])
 TOKEN = os.environ["TG_BOT_TOKEN"]
 
@@ -15,10 +8,8 @@ WEBHOOK_URL = None
 
 USE_WEBHOOK = os.getenv("TG_BOT_USE_WEBHOOK","False").lower() in ("true","t","1","yes","y")
 if USE_WEBHOOK:
-    ctrl_env("TG_BOT_WEBHOOK_URL","TG_BOT_WEBHOOK_URL is required to be in environment! Put the public link that will externally refer to the webhook webserver to / path")
     WEBHOOK_URL = os.environ["TG_BOT_WEBHOOK_URL"]
 
-ctrl_env("API_EXTERNAL_URL","API_EXTERNAL_URL is required to be in environment! Put the correct external URL Access on the API platform")
 EXTERNAL_API = os.environ["API_EXTERNAL_URL"]
 
 BROADCAST_THREADING_LIMIT = int(os.getenv("THREAD_FOR_BROADCASTING",1))

@@ -1,13 +1,32 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:600");
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
     font-family: oswald, sans-serif;
     font-weight: 700;
-    color: #fff
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%)
+}
+
+.darkmode--activated h1,
+.darkmode--activated h2,
+.darkmode--activated h3,
+.darkmode--activated h4,
+.darkmode--activated h5,
+.darkmode--activated h6 {
+    color: #fff;
+}
+
+.gtext{
+    color:#111;
+}
+
+.darkmode--activated .gtext{
+    color: #fff;
 }
 
 h1 {
@@ -18,45 +37,23 @@ h1 {
     box-sizing: border-box
 }
 
-html,
-p,
-strong,
-div {
+html, p, strong, div {
     font-family: Arial, Helvetica, sans-serif;
-    color: #fff
+}
+
+.darkmode--activated html,
+.darkmode--activated p,
+.darkmode--activated strong,
+.darkmode--activated div {
+    color: #fff;
 }
 
 body {
     margin: 0;
-    background-color: rgba(14, 14, 14, .815)
 }
 
-hr {
-    position: absolute;
-    width: 100vw;
-    left: 0;
-    border-width: 4px;
-    border-color: #2a2a2a
-}
-
-table {
-    width: 100%
-}
-
-td,
-th {
-    border: solid 3px;
-    text-align: center
-}
-
-img {
-    max-width: 100%;
-    max-height: 100%;
-    user-select: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none
+.darkmode--activated body{
+    color: #fff;
 }
 
 a {
@@ -69,225 +66,9 @@ a:hover {
     color: #2b747e;
     transition: .5s
 }
-
-img.circle-dark-border {
-    border-radius: 50%;
-    border: 6px solid #000
-}
-
-.row img {
-    margin: auto;
-    display: block
-}
-
-.white {
-    color: #fff
-}
-
-blockquote {
-    border-left: 10px solid #ccc;
-    margin: 1.5em 10px;
-    padding: .5em 10px
-}
-
-blockquote:before {
-    color: #aaa;
-    font-size: 4em;
-    line-height: .1em;
-    margin-right: .25em;
-    vertical-align: -.4em
-}
-
-blockquote p {
-    display: inline-block
-}
-
-.disable-select {
-    user-select: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none
-}
-
-.word-break-text {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-all;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto
-}
-
-.vertical-center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%)
-}
-
-.rot180 {
-    transform: rotate(180deg);
-    transition: transform .5s linear
-}
-
-div.loader {
-    border: 4px solid transparent;
-    border-radius: 50%;
-    width: 30px;
-    border-top: 4px solid #fff;
-    height: 30px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite
-}
-
-div.loader.big {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 6px solid transparent;
-    -webkit-animation: spin 1.7s linear infinite;
-    animation: spin 1.7s linear infinite
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-        border-top-color: #e94a37
-    }
-    20% {
-        border-top-color: #ed8838
-    }
-    40% {
-        border-top-color: #f5cf3b
-    }
-    60% {
-        border-top-color: #7cd13e
-    }
-    80% {
-        border-top-color: #2b9de1
-    }
-    100% {
-        transform: rotate(360deg);
-        border-top-color: #e94a37
-    }
-}
-
-@-webkit-keyframes spin {
-    0% {
-        transform: rotate(0deg);
-        border-top-color: #e94a37
-    }
-    20% {
-        border-top-color: #ed8838
-    }
-    40% {
-        border-top-color: #f5cf3b
-    }
-    60% {
-        border-top-color: #7cd13e
-    }
-    80% {
-        border-top-color: #2b9de1
-    }
-    100% {
-        transform: rotate(360deg);
-        border-top-color: #e94a37
-    }
-}
-
-.noscroll {
-    overflow: hidden
-}
-
-.overlay {
-    position: fixed;
-    overflow-y: scroll;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0
-}
-
-.overlay.all {
-    display: block;
-    z-index: 500;
-    background: #333;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden
-}
-
-.animated-hide {
-    -webkit-animation: fadeOut 1s;
-    animation: fadeOut 1s;
-    animation-fill-mode: forwards
-}
-
-@-webkit-keyframes fadeOut {
-    0% {
-        opacity: 1
-    }
-    99% {
-        opacity: .01;
-        width: 100%;
-        height: 100%
-    }
-    100% {
-        opacity: 0;
-        width: 0;
-        height: 0
-    }
-}
-
-@keyframes fadeOut {
-    0% {
-        opacity: 1
-    }
-    99% {
-        opacity: .01;
-        width: 100%;
-        height: 100%
-    }
-    100% {
-        opacity: 0;
-        width: 0;
-        height: 0
-    }
-}
-
-.fas,
-.far,
-.fal,
-.fad,
-.fab {
-    color: #fff
-}
-
-footer {
-    max-width: 100%;
-    padding-left: 5%;
-    padding-right: 5%;
-    padding-top: 50px;
-    padding-bottom: 40px;
-    margin-top: 50px;
-    background-color: #2e2e2e;
-    color: #fff;
-    font-family: cabin, sans-serif
-}
-
-.transition-fade {
-    transition: .2s;
-    opacity: 1
-}
-
-html.is-animating .transition-fade {
-    opacity: 0;
-    overflow: hidden;
-    margin-top: 100px
+.darkmode--activated a:hover{
+    color: #2b747e;
+    transition: .5s
 }
 
 .form__group {
@@ -297,14 +78,19 @@ html.is-animating .transition-fade {
     width: 100%;
 }
 
+.darkmode--activated .form__field {
+    border-bottom: 2px solid #9b9b9b;
+    color: #fff;
+}
+
 .form__field {
     font-family: inherit;
     width: 100%;
     border: 0;
-    border-bottom: 2px solid #9b9b9b;
+    border-bottom: 2px solid #333;
     outline: 0;
     font-size: 1.3rem;
-    color: #fff;
+    color: #333;
     padding: 7px 0;
     background: transparent;
     transition: border-color 0.2s;
@@ -326,6 +112,10 @@ html.is-animating .transition-fade {
     display: block;
     transition: 0.2s;
     font-size: 0.8rem;
+    color: #333;
+}
+
+.darkmode--activated .form__label {
     color: #9b9b9b;
 }
 
@@ -365,9 +155,15 @@ html.is-animating .transition-fade {
     border-radius: 10px;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border: 0;
+    color:#222;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 30px;
+}
+
+.darkmode--activated .submit-button{
+    background: #368a99;
+    color:#FFF;
 }
 
 .submit-button:hover {
@@ -386,7 +182,6 @@ html.is-animating .transition-fade {
 
 .submit-button {
     display: block;
-    color: white;
     text-align: center;
 }
 
@@ -394,6 +189,7 @@ html.is-animating .transition-fade {
 /*------*/
 
 #content {
+    width: 100% !important;
     padding: 15px;
     padding-top: 40px;
 }
@@ -404,19 +200,29 @@ html.is-animating .transition-fade {
     padding: 20px;
     margin-top: 10px;
     margin-bottom: 30px;
-    background: #333;
-    border: #111 solid 4px;
+    background: #CCC;
+    border: #444 solid 4px;
     border-radius: 20px;
 }
+
+.darkmode--activated .doc_div{
+    background: #333;
+    border: #111 solid 4px ;
+}
+
 
 .put_right {
     float: right;
 }
 
 .download-btn {
-    color: #FFF;
+    color: #111;
     margin-right: 8px;
     margin-left: 8px;
+}
+
+.darkmode--activated .download-btn{
+    color: #FFF;
 }
 
 .download-btn-show {
@@ -464,8 +270,8 @@ html.is-animating .transition-fade {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #3b5253;
-    color: #FFF;
+    background: #dddddd;
+    color:#111;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -482,24 +288,23 @@ html.is-animating .transition-fade {
 .circle-btn:hover {
     text-decoration: none;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    background: #618085;
-    color: #FFF;
+    background: #b9f9ff;
     cursor: pointer;
 }
 
 .page_selected {
-    background: #618085;
+    background: #368a99;
 }
 
 .c-arrow {
     width: 30px;
     height: 30px;
     font-size: 0.8em;
-    background: #3b5253;
+    background: #dddddd;
 }
 
 :root {
-    --select-border: #777;
+    --select-border: #555;
     --select-focus: blue;
     --select-arrow: var(--select-border);
   }
@@ -585,3 +390,17 @@ html.is-animating .transition-fade {
   .select + label {
     margin-top: 2rem;
   }
+
+  header.title-page{
+    background-color: #DDD;
+    padding: 30px;
+    padding-bottom: 30px;
+  }
+.darkmode-toggle{
+    z-index: 50;
+}
+
+::selection{
+    background:#67a2dd;
+    color:#fff
+}

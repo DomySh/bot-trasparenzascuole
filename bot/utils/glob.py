@@ -1,6 +1,7 @@
 from telegram.ext import ConversationHandler, Filters
 from functools import wraps
 import re, telegram, traceback, datetime
+from concurrent.futures import ThreadPoolExecutor
 
 EXCLUDE_CANCEL = Filters.regex(r"^(?!(\\/cancel)$)(.|\\n)+$")
 updater = None
@@ -40,20 +41,28 @@ def     msg(merge_to_message:bool = True,
         @wraps(f)
         def wrap(update, context):
             try:
+
                 user = None
                 log_msg = None
                 jcallb_data = None
                 if update.message is None:
+                    if update.callback_query.message.chat.type != "private":
+                        update.callback_query.edit_message_text("È possibile utilizzare il bot solo in chat privata! ❌")
+                        update.callback_query.message.chat.leave()
+                        return ConversationHandler.END
                     user = db.TelegramUser.load_telegram(update.callback_query.from_user)
                     if automatic_answer_query: update.callback_query.answer()
                     if merge_to_message: update.message = update.callback_query
                     if jcallb:
                         jcallb_data = JCallB().parse(update.callback_query.data)
                         if jcallb_data is None:
-                            update.message.edit_message_text("Operazione scaduta ⏱️!\nGenera un nuovo messaggio per eseguire l'operazione!")
+                            update.callback_query.edit_message_text("Operazione scaduta ⏱️!\nGenera un nuovo messaggio per eseguire l'operazione!")
                             return ConversationHandler.END
-                    
                 else:
+                    if update.message.chat.type != "private":
+                        update.message.reply_text("È possibile utilizzare il bot solo in chat privata! ❌")
+                        update.message.chat.leave()
+                        return ConversationHandler.END
                     if jcallb: raise Exception("It's not possible catch a JCallback is there is no callback data")
                     log_msg = update.message.text
                     user = db.TelegramUser.load_telegram(update.message.from_user)
@@ -109,6 +118,11 @@ def segnalate_error(e:Exception,update):
     except Exception as e:
         traceback.print_exc()
 
+def use_threads_bcast(func_map,list_to_pass):
+    from utils import config as conf
+    with conf.BCAST_LOCK:
+        with ThreadPoolExecutor(conf.BROADCAST_THREADING_LIMIT) as exec:
+            exec.map(func_map,list_to_pass)
 
 @msg()
 def cancel_op(update,user):
