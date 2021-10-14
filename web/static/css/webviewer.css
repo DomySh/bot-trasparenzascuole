@@ -211,7 +211,7 @@ a:hover {
 }
 
 .darkmode--activated .doc_div{
-    background: #333;
+    background: #2C2C2C;
     border: #111 solid 4px ;
     transition:.3s;
 }
