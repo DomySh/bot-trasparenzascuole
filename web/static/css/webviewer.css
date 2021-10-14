@@ -23,10 +23,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .gtext{
     color:#111;
+    transition:.3s;
 }
 
 .darkmode--activated .gtext{
     color: #fff;
+    transition:.3s;
 }
 
 h1 {
@@ -50,9 +52,11 @@ html, p, strong, div {
 
 body {
     margin: 0;
+    transition:.3s;
 }
 
 .darkmode--activated body{
+    transition:.3s;
     color: #fff;
 }
 
@@ -203,11 +207,13 @@ a:hover {
     background: #CCC;
     border: #444 solid 4px;
     border-radius: 20px;
+    transition:.3s;
 }
 
 .darkmode--activated .doc_div{
     background: #333;
     border: #111 solid 4px ;
+    transition:.3s;
 }
 
 
@@ -219,10 +225,12 @@ a:hover {
     color: #111;
     margin-right: 8px;
     margin-left: 8px;
+    transition:.3s;
 }
 
 .darkmode--activated .download-btn{
     color: #FFF;
+    transition:.3s;
 }
 
 .download-btn-show {
@@ -391,13 +399,30 @@ a:hover {
     margin-top: 2rem;
   }
 
-  header.title-page{
+header.title-page{
     background-color: #DDD;
     padding: 30px;
     padding-bottom: 30px;
-  }
+    transition:.3s;
+}
 .darkmode-toggle{
     z-index: 50;
+}
+.darkmode-layer, .darkmode-background{
+    display:none;
+}
+
+.darkmode--activated header.title-page{
+    background:#222;
+    transition:.3s;
+}
+
+main{
+    transition:.3s;
+}
+.darkmode--activated main{
+    background:#333;
+    transition:.3s;
 }
 
 ::selection{
