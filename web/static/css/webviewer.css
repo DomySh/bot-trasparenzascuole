@@ -417,10 +417,7 @@ header.title-page{
     transition:.3s;
 }
 
-main{
-    transition:.3s;
-}
-.darkmode--activated main{
+.darkmode--activated{
     background:#333;
     transition:.3s;
 }
