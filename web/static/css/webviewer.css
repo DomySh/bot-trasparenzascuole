@@ -426,3 +426,8 @@ header.title-page{
     background:#67a2dd;
     color:#fff
 }
+
+.darkmode-layer--no-transition,.darkmode-layer--no-transition *{
+    transition:0s;
+}
+

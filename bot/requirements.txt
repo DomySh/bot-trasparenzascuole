@@ -1,6 +1,6 @@
-python-telegram-bot
-python-telegram-bot[socks]
-python-telegram-bot[ujson]
+python-telegram-boti==13
+python-telegram-bot[socks]==13
+python-telegram-bot[ujson]==13
 ujson
 urllib3
 pymongo

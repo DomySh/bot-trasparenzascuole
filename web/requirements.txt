@@ -2,6 +2,6 @@ fastapi[all]
 lxml
 aiofiles
 httpx
-urllib3
 requests
+urllib3
 motor
