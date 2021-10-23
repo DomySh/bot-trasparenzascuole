@@ -7,8 +7,7 @@
     <link href="/static/icon.png" rel="icon" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Darkmode.js/1.5.7/darkmode-js.min.js" referrerpolicy="no-referrer"></script>
-    <link href="/static/css/webviewer.css?v1.1.1" rel="stylesheet" type="text/css">
+    <link href="/static/css/webviewer.css?v2" rel="stylesheet" type="text/css">
     <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -29,20 +28,9 @@
 </head>
 
 <body>
-    <script>
-        const darkmode = new Darkmode({
-            mixColor: '#BBBBBB',
-            buttonColorDark: '#333', 
-            label: '🌓',
-        });
-        darkmode.showWidget();
-    </script>
     <header class="title-page">
-        <h1 class="darkmode-ignore gtext">Documenti Web 📝</h1><br>
-        <p class="darkmode-ignore gtext">Made by <a href="https://github.com/DomySh/bot-trasparenzascuole">DomySh</a></p><br>
-	{% if customer_name %}
-        	<b class="darkmode-ignore gtext">{{ customer_name }}</b>
-	{% endif %}
+        <h1>Documenti Web 📝</h1>
+        <p style="margin:0;">Made by <a href="https://github.com/DomySh/bot-trasparenzascuole">DomySh</a></p>
         <div class="d-flex justify-content-center row">
             <div class="col-7 col-sm-9">
                 <div class="form__group field">
@@ -54,24 +42,32 @@
                 <button class="submit-button state-0">Invia</button>
             </div>
         </div>
-        <div id="pid_selection" style="display: flex;align-items: right; justify-content: right;margin-top:30px;">
-            <h6 style="margin-right:10px" class="darkmode-ignore gtext">Bacheca:</h6>
-            <div class="select">
-                <select id="pid_select" onchange="bacheca_filter()">
-                    <option value="all" selected>Tutti</option>
-                    {% for ele in pids %}
-                        <option value="{{ele['id']}}">{{ele['name']}}</option>
-                    {% endfor %}
-                </select>
-                <span class="focus"></span>
+        
+        <div id="pid_selection" class="row" style="padding-top: 20px;">
+            <div class="col-12 col-sm-6" style="padding-top: 10px;">
+            {% if customer_name %}
+                <b>{{ customer_name }}</b>
+            {% endif %}
+            </div>
+            <div class="col-12 col-sm-6" style="display:flex;justify-content: right; align-items: center;padding-top: 10px;">
+                <h6 style="margin-right:10px">Bacheca:</h6>
+                <div class="select">
+                    <select id="pid_select" onchange="bacheca_filter()">
+                        <option value="all" selected>Tutti</option>
+                        {% for ele in pids %}
+                            <option value="{{ele['id']}}">{{ele['name']}}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="focus"></span>
+                </div>
             </div>
         </div>
     </header>
     <main class="container">
-        <div id="content" class="darkmode-ignore"></div>
+        <div id="content"></div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/static/js/webviewer.js?1.2"></script>
+    <script src="/static/js/webviewer.js?1.2.1"></script>
 
 </body>
 

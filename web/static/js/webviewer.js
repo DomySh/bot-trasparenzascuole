@@ -191,7 +191,7 @@ function build_tag(doc) {
         <p class="date_doc"><b>🗓️ Pubblicata il:</b> ${date != null ? esc(date) : "<u>Data non disponibile!</u>"}</p>
         <a target="_blank" href="${quoteattr("/view/"+doc.match)}" class="download-btn-show">Lettore PDF</a>
         <span class="put_right">
-        <a target="_blank" href="${quoteattr(doc.attachment.download)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
+        <a target="_blank" href="/download/${quoteattr(doc.match)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
         </span>
         </div>`
     return $(text)[0]

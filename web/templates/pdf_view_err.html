@@ -4,8 +4,7 @@
 	<title>Lettore Documenti</title>
 	<link href="/static/icon.png" rel="icon" type="image/png" />
 	<meta charset="utf-8"/>
-	<link rel="stylesheet" href="/static/css/weberr.css" />	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Darkmode.js/1.5.7/darkmode-js.min.js" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="/static/css/weberr.css?v2" />	
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="Lettore Documenti">
 	<meta property="og:description" content="Lettore PDF">
@@ -15,19 +14,9 @@
 	<meta content="width=device-width, initial-scale = 1.0" name="viewport">
 	<meta content="IE=edge" http-equiv="X-UA-Compatible" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
-	<link rel="stylesheet" href="{{ public_url }}/static/style.css" />
 </head>
 
 <body>
-	<script>
-        const darkmode = new Darkmode({
-            mixColor: '#BBB',
-			backgroundColor: '#EEE',
-            buttonColorDark: '#333',
-            label: '🌓',
-        });
-        darkmode.showWidget();
-    </script>
 	<div class="tot-centered">
 		<h2 class="title-err">⚠️ <u>Ops! Si è verificato un problema!</u></h2>
 		{% if msg %}

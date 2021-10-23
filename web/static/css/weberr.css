@@ -6,27 +6,21 @@
     text-shadow:-2px -2px 0 #222,2px -2px 0 #222,-2px 2px 0 #222,2px 2px 0 #222
 }
 
-html,p,strong,div{
+html, p, strong, div{
     font-family:Arial,Helvetica,sans-serif;
 }
-.darkmode--activated html,
-.darkmode--activated p,
-.darkmode--activated strong,
-.darkmode--activated div{
-    color: #FFF;
-}
+
 body{
     margin:0;
+    background: #FFF;
 }
-.darkmode--activated .title-err{
-    color:yellow;
-    font-size: 160%;
-}
+
 a{
     text-decoration:dashed;
     color:#88e;
     transition:.25s
 }
+
 a:hover{
     color:#aaf;
     transition:.5s
@@ -49,3 +43,20 @@ a:hover{
 .darkmode-toggle{
     z-index: 1000;
 }
+
+@media (prefers-color-scheme: dark) {
+
+	html, p, strong, div{
+    		color: #FFF;
+	}
+
+	.title-err{
+    		color:yellow;
+    		font-size: 160%;
+	}
+	
+	body{
+    		background: #333;
+	}
+}
+

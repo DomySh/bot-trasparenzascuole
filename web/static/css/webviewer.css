@@ -12,24 +12,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-50%)
 }
 
-.darkmode--activated h1,
-.darkmode--activated h2,
-.darkmode--activated h3,
-.darkmode--activated h4,
-.darkmode--activated h5,
-.darkmode--activated h6 {
-    color: #fff;
-}
-
-.gtext{
-    color:#111;
-    transition:.3s;
-}
-
-.darkmode--activated .gtext{
-    color: #fff;
-    transition:.3s;
-}
 
 h1 {
     font-size: 3em
@@ -43,22 +25,14 @@ html, p, strong, div {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.darkmode--activated html,
-.darkmode--activated p,
-.darkmode--activated strong,
-.darkmode--activated div {
-    color: #fff;
-}
+
 
 body {
+    color:#111;
     margin: 0;
-    transition:.3s;
 }
 
-.darkmode--activated body{
-    transition:.3s;
-    color: #fff;
-}
+
 
 a {
     text-decoration: dashed;
@@ -70,10 +44,6 @@ a:hover {
     color: #2b747e;
     transition: .5s
 }
-.darkmode--activated a:hover{
-    color: #2b747e;
-    transition: .5s
-}
 
 .form__group {
     position: relative;
@@ -82,10 +52,7 @@ a:hover {
     width: 100%;
 }
 
-.darkmode--activated .form__field {
-    border-bottom: 2px solid #9b9b9b;
-    color: #fff;
-}
+
 
 .form__field {
     font-family: inherit;
@@ -117,10 +84,6 @@ a:hover {
     transition: 0.2s;
     font-size: 0.8rem;
     color: #333;
-}
-
-.darkmode--activated .form__label {
-    color: #9b9b9b;
 }
 
 .form__field:focus {
@@ -165,11 +128,6 @@ a:hover {
     margin-top: 30px;
 }
 
-.darkmode--activated .submit-button{
-    background: #368a99;
-    color:#FFF;
-}
-
 .submit-button:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     background: #618085;
@@ -207,14 +165,9 @@ a:hover {
     background: #CCC;
     border: #444 solid 4px;
     border-radius: 20px;
-    transition:.3s;
 }
 
-.darkmode--activated .doc_div{
-    background: #2C2C2C;
-    border: #111 solid 4px ;
-    transition:.3s;
-}
+
 
 
 .put_right {
@@ -225,13 +178,8 @@ a:hover {
     color: #111;
     margin-right: 8px;
     margin-left: 8px;
-    transition:.3s;
 }
 
-.darkmode--activated .download-btn{
-    color: #FFF;
-    transition:.3s;
-}
 
 .download-btn-show {
     margin: 5px;
@@ -315,10 +263,10 @@ a:hover {
     --select-border: #555;
     --select-focus: blue;
     --select-arrow: var(--select-border);
-  }
-  select {
+}
+select {
     -webkit-appearance: none;
-       -moz-appearance: none;
+        -moz-appearance: none;
             appearance: none;
     background-color: transparent;
     border: none;
@@ -331,12 +279,12 @@ a:hover {
     line-height: inherit;
     z-index: 1;
     outline: none;
-  }
-  select::-ms-expand {
+}
+select::-ms-expand {
     display: none;
-  }
-  
-  .select {
+}
+
+.select {
     display: grid;
     grid-template-areas: "select";
     align-items: center;
@@ -351,11 +299,11 @@ a:hover {
     line-height: 1.1;
     background-color: #fff;
     background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
-  }
-  .select select, .select::after {
+}
+.select select, .select::after {
     grid-area: select;
-  }
-  .select:not(.select--multiple)::after {
+}
+.select:not(.select--multiple)::after {
     content: "";
     justify-self: end;
     width: 0.8em;
@@ -363,9 +311,9 @@ a:hover {
     background-color: var(--select-arrow);
     -webkit-clip-path: polygon(100% 0%, 0 0%, 50% 100%);
             clip-path: polygon(100% 0%, 0 0%, 50% 100%);
-  }
-  
-  select:focus + .focus {
+}
+
+select:focus + .focus {
     position: absolute;
     top: -1px;
     left: -1px;
@@ -373,53 +321,36 @@ a:hover {
     bottom: -1px;
     border: 2px solid var(--select-focus);
     border-radius: inherit;
-  }
-  
-  select[multiple] {
+}
+
+select[multiple] {
     padding-right: 0;
     height: 6rem;
-  }
-  select[multiple] option {
+}
+select[multiple] option {
     white-space: normal;
     outline-color: var(--select-focus);
-  }
-  
-  .select--disabled {
+}
+
+.select--disabled {
     cursor: not-allowed;
     background-color: #eee;
     background-image: linear-gradient(to top, #ddd, #eee 33%);
-  }
-  
-  label {
+}
+
+label {
     font-size: 1.125rem;
     font-weight: 500;
-  }
-  
-  .select + label {
+}
+
+.select + label {
     margin-top: 2rem;
-  }
+}
 
 header.title-page{
     background-color: #DDD;
     padding: 30px;
     padding-bottom: 30px;
-    transition:.3s;
-}
-.darkmode-toggle{
-    z-index: 50;
-}
-.darkmode-layer, .darkmode-background{
-    display:none;
-}
-
-.darkmode--activated header.title-page{
-    background:#222;
-    transition:.3s;
-}
-
-.darkmode--activated{
-    background:#333;
-    transition:.3s;
 }
 
 ::selection{
@@ -427,7 +358,43 @@ header.title-page{
     color:#fff
 }
 
-.darkmode-layer--no-transition,.darkmode-layer--no-transition *{
-    transition:0s;
-}
+@media (prefers-color-scheme: dark) { 
+    body{
+        background:#333;
+        color: #fff;
+    }
 
+    h1, h2, h3, h4, h5, h6 {
+        color: #fff;
+    }
+
+    header.title-page{
+        background:#252525;
+    }
+    .download-btn{
+        color: #FFF;
+    }
+    .doc_div{
+        background: #2C2C2C;
+        border: #111 solid 4px;
+    }
+    html, p, strong, div {
+        color: #fff;
+    }
+
+    .submit-button{
+        background: #368a99;
+        color:#FFF;
+    }
+    .form__label {
+        color: #9b9b9b;
+    }
+    .form__field {
+        border-bottom: 2px solid #9b9b9b;
+        color: #fff;
+    }
+    a:hover{
+        color: #2b747e;
+        transition: .5s
+    }
+}

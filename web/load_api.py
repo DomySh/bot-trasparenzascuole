@@ -236,7 +236,8 @@ async def remove_download_lock(match_id):
 async def aioproxy_stream(url):
     req = httpc.build_request("GET",url)
     resp = await httpc.send(req, stream=True)
-    return StreamingResponse(resp.aiter_bytes(),media_type=resp.headers['content-type'], status_code=resp.status_code)
+
+    return StreamingResponse(resp.aiter_bytes(),headers={"Content-Disposition":resp.headers['Content-Disposition']}, media_type=resp.headers['content-type'], status_code=resp.status_code)
 
 @app.get('/download/{match_id}')
 async def download_attachments(match_id: str):
