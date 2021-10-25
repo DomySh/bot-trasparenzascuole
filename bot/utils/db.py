@@ -284,9 +284,9 @@ class FeedMsg:
     @staticmethod
     def add_msg_feed(match_id,element):
         if type(element) == list:
-            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":{"$each":element}}},upsert=True)
+            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":{"$each":element}},"$set":{"created":datetime.now()}},upsert=True)
         else:    
-            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":element}},upsert=True)
+            DB["feed_msg"].update_one({"match":match_id},{"$push":{"messages":element},"$set":{"created":datetime.now()}},upsert=True)
     
     @staticmethod
     def get_msg_feed(match_id):

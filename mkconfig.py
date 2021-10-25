@@ -20,9 +20,9 @@ yaml_json = {
     }
 }
 
-global API_PORT
+global API_PORT, AXIOS_CODE
 
-API_PORT = None
+API_PORT = AXIOS_CODE = None
 
 def y_or_n(default=False):
     while True:
@@ -101,6 +101,7 @@ def mongo_auth():
 
 
 def mongodb_conn():
+    global AXIOS_CODE
     print("Vuoi utilizzare un database mongodb generato con un container docker?")
     if y_or_n(True):
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=0")
@@ -108,10 +109,11 @@ def mongodb_conn():
         yaml_json["services"]["mongo"] = {
             "image":"mongo:4",
             "restart":"unless-stopped",
-            "volumes":["./mongodbdata:/data/db"]
+            "volumes":["mongo_data:/data/db"]
         }
         yaml_json["services"]["web"]["depends_on"]=["mongo"]
         yaml_json["services"]["bot"]["depends_on"]=["mongo"]
+        yaml_json["volumes"] = {"mongo_data":{"name":"bot_trasparenzascuole_"+AXIOS_CODE}}
 
     else:
         yaml_json["services"]["bot"]["environment"].append("EXTERNAL_MONGO=1")
@@ -253,6 +255,7 @@ def webhook_port():
             break
 
 def axios_customer_id():
+    global AXIOS_CODE
     while True:
         print("[[ AXIOS_CUSTOMER_ID ]]\nInserisci il customer id sulla piattaforma axios, o il link della tua scuola su trasparenzascuole.it\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/README.md")
         res = input("> ")
@@ -263,6 +266,7 @@ def axios_customer_id():
         else:
             res = None
         if res:
+            AXIOS_CODE = res
             yaml_json["services"]["web"]["environment"].append(f"AXIOS_CUSTOMER_ID={res}")
             break
 
