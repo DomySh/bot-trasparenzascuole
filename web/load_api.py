@@ -6,12 +6,11 @@ import os, re, uvicorn, asyncio, aiofiles, httpx
 from pathlib import Path
 from base64 import urlsafe_b64decode
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse, RedirectResponse
 from fastapi.background import BackgroundTasks
 
 PUBLIC_LINK = os.environ["API_AXIOS_DATA_LINK"].strip()
 if PUBLIC_LINK.endswith("/"): PUBLIC_LINK = PUBLIC_LINK[:-1]
-
 
 DB_CONN = None
 DBNAME = "main"
@@ -199,9 +198,11 @@ async def events_updates_in_pid(pid: str, last_index: int):
 async def pdf_viewer(request: Request, match_id: str):
     """PDF viewer of attachment selected by match id"""
     doc = await DB["docs"].find_one({"match":match_id})
-    if doc is None:
-        return render("pdf_view_err.html",{"request": request, "public_url": PUBLIC_LINK})
-    return render("viewer.html", {"request": request, "doc": doc, "public_url": PUBLIC_LINK})
+    if doc is None or doc["attachment"] is None or doc["attachment"]["download"] is None:
+        return render("invalid_doc.html",{"request": request, "public_url": PUBLIC_LINK})
+    if doc["attachment"]["name"] is None or os.path.splitext(doc["attachment"]["name"])[1].lower() != ".pdf":
+        return RedirectResponse(url='/download/'+doc["match"])
+    return render("pdf_reader.html", {"request": request, "doc": doc, "public_url": PUBLIC_LINK})
 
 lock_download_file = asyncio.Lock()
 lock_match = {}
@@ -245,18 +246,18 @@ async def download_attachments(match_id: str):
     doc = await DB["docs"].find_one({"match":match_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Invalid match id!")
-    if doc["attachment"]["download"] is None:
+    if doc["attachment"] is None or doc["attachment"]["download"] is None:
         raise HTTPException(status_code=404, detail="No Download link found!")
     if API_CACHE_ATTACHMENTS:
         if re.match(r"^[a-zA-Z0-9-_]*$",match_id):
-            path_file = str(Path(__file__).parent.absolute() / "data" / (match_id+".pdf"))
+            path_file = str(Path(__file__).parent.absolute() / "data" / match_id)
             if not os.path.exists(path_file):
                 if await add_download_lock(match_id):
                     await download_doc(doc["attachment"]["download"],path_file)
                 await remove_download_lock(match_id)
             filename = doc["attachment"]["name"]
             if filename is None:
-                filename = match_id+".pdf"
+                filename = match_id
             return FileResponse(path_file,filename=filename)
         else:
             raise HTTPException(status_code=404, detail="Invalid match id!")
@@ -268,7 +269,7 @@ async def web_view(request: Request):
     """Main page of the web platform"""
     customer = await DB["static"].find_one({"id":"updater"})
     customer = customer["customer_name"] if "customer_name" in customer else None
-    return render("webview.html", {"request": request, "customer_name": customer, "pids": await mongolist(DB["pids"].find({})) ,"public_url": PUBLIC_LINK})
+    return render("index.html", {"request": request, "customer_name": customer, "pids": await mongolist(DB["pids"].find({})) ,"public_url": PUBLIC_LINK})
 
 if __name__ == "__main__": 
     uvicorn.run(
