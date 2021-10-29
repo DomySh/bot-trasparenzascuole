@@ -23,25 +23,28 @@ See https://github.com/adobe-type-tools/cmap-resources
 <html dir="ltr" mozdisallowselectionprint>
 
 <head>
-  {% if doc['note'] %}
-  <title> {{ doc['note'] }} - Lettore PDF</title>
-  {% elif doc['description'] %}
-  <title> {{ doc['description'] }} - Lettore PDF</title>
-  {% else %}
-  <title>Lettore Documenti PDF</title>
-  {% endif %}
   
   <meta charset="utf-8">
   <meta name="google" content="notranslate">
   <meta property="og:type" content="website">
 
-  {% if doc['note'] %}
+  {% if doc['note'] and doc['description'] %}
+  <title> {{ doc['note'] }} - Lettore PDF</title>
+  <meta property="og:title" content="{{ doc['note'] }} - Lettore PDF">
+  <meta property="og:description" content="{{ doc['description'] }}">
+  {% elif doc['note'] %}
+  <title> {{ doc['note'] }} - Lettore PDF</title>
+  <meta property="og:title" content="{{ doc['note'] }} - Lettore PDF">
   <meta property="og:description" content="{{ doc['note'] }}">
   {% elif doc['description'] %}
+  <title> {{ doc['description'] }} - Lettore PDF</title>
+  <meta property="og:title" content="{{ doc['description'] }} - Lettore PDF">
   <meta property="og:description" content="{{ doc['description'] }}">
-  {% endif %}
-
+  {% else %}
+  <title>Lettore Documenti PDF</title>
   <meta property="og:title" content="Lettore Documenti PDF">
+  {% endif %}
+  
   <meta property="og:site_name" content="Allegato PDF">
 
   <meta property="og:image" content="{{ public_url }}/static/icon.png">
