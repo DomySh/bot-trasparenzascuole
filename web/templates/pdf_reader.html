@@ -35,14 +35,15 @@ See https://github.com/adobe-type-tools/cmap-resources
   {% elif doc['note'] %}
   <title> {{ doc['note'] }} - Lettore PDF</title>
   <meta property="og:title" content="{{ doc['note'] }} - Lettore PDF">
-  <meta property="og:description" content="{{ doc['note'] }}">
+  <meta property="og:description" content="Pubblicato il {{ doc['date'].strftime('%d/%m/%Y %H:%M') }}">
   {% elif doc['description'] %}
   <title> {{ doc['description'] }} - Lettore PDF</title>
   <meta property="og:title" content="{{ doc['description'] }} - Lettore PDF">
-  <meta property="og:description" content="{{ doc['description'] }}">
+  <meta property="og:description" content="Pubblicato il {{ doc['date'].strftime('%d/%m/%Y %H:%M') }}">
   {% else %}
   <title>Lettore Documenti PDF</title>
   <meta property="og:title" content="Lettore Documenti PDF">
+  <meta property="og:description" content="Pubblicato il {{ doc['date'].strftime('%d/%m/%Y %H:%M') }}">
   {% endif %}
   
   <meta property="og:site_name" content="Lettore PDF online">
