@@ -14,7 +14,7 @@ def get_text_circolare(data):
 
 📓 <b><u>Note</u>:</b> {html.escape(note)}
 
-🗓️ Pubblicata il {html.escape(data_time)}
+🗓️ Pubblicato il {html.escape(data_time)}
 📌 Bacheca: {html.escape(db.get_pid_name(data['pid']))}
 """
 
