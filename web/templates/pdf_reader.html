@@ -24,9 +24,9 @@ See https://github.com/adobe-type-tools/cmap-resources
 
 <head>
   {% if doc['note'] %}
-  <title>Lettore Documento {{ doc['note'] }}</title>
+  <title> {{ doc['note'] }} - Lettore PDF</title>
   {% elif doc['description'] %}
-  <title>Lettore Documento {{ doc['description'] }}</title>
+  <title> {{ doc['description'] }} - Lettore PDF</title>
   {% else %}
   <title>Lettore Documenti PDF</title>
   {% endif %}
