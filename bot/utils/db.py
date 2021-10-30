@@ -52,7 +52,9 @@ class JCallbackHash:
         self.hash = b64encode(self.hash).decode()
 def init():
     DB["users"].create_indexes([
-        IndexModel([("admin",ASCENDING)])
+        IndexModel([("admin",ASCENDING)]),
+        IndexModel([("last_access",ASCENDING)]),
+        IndexModel([("created",ASCENDING)])     
     ])
     DB["callback_data_hash"].create_indexes([
         IndexModel([("created",ASCENDING)],expireAfterSeconds=60*60*24*10)

@@ -21,7 +21,7 @@ input.addEventListener("keyup", function(event) {
 
 function get_pid_name_by_id(id){
     for (let i = 0;i<pids_infos.length;i+=1){
-        if (pids_infos[i].id == id){
+        if (pids_infos[i]._id == id){
             return pids_infos[i].name
         }
     }
@@ -189,9 +189,9 @@ function build_tag(doc) {
         <p class="note"><b>📓 Note:</b> ${doc.note != null ? esc(doc.note): "<u>Nessuna nota disponibie!</u>" }</p>
         <p class="descript"><b>🔥 Descrizione:</b> ${doc.description != null ? esc(doc.description): "<u>Nessuna descrizione disponibie!</u>" }</p>
         <p class="date_doc"><b>🗓️ Pubblicata il:</b> ${date != null ? esc(date) : "<u>Data non disponibile!</u>"}</p>
-        <a target="_blank" href="${quoteattr("/view/"+doc.match)}" class="download-btn-show">Lettore PDF</a>
+        <a target="_blank" href="${quoteattr("/view/"+doc._id)}" class="download-btn-show">Lettore PDF</a>
         <span class="put_right">
-        <a target="_blank" href="/download/${quoteattr(doc.match)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
+        <a target="_blank" href="/download/${quoteattr(doc._id)}" class="download-btn" download><i class="fa fa-download" aria-hidden="true"></i></a>
         </span>
         </div>`
     return $(text)[0]

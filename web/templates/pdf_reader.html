@@ -53,7 +53,7 @@ See https://github.com/adobe-type-tools/cmap-resources
   <meta content="width=device-width, initial-scale = 1.0" name="viewport">
   <link href="/static/icon.png" rel="icon" type="image/png" />
   <meta content="IE=edge" http-equiv="X-UA-Compatible" />
-  <meta id="doc-match" data="{{ doc['match'] }}" />
+  <meta id="doc-match" data="{{ doc['_id'] }}" />
   <link rel="stylesheet" href="/static/web/viewer.css?v1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
     integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
@@ -71,7 +71,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 </head>
 
 <body tabindex="1">
-  <a download class="pop-up" id="download-btn" href="{{ public_url }}/download/{{ doc['match'] }}"><i class="fa fa-download"
+  <a download class="pop-up" id="download-btn" href="{{ public_url }}/download/{{ doc['_id'] }}"><i class="fa fa-download"
       aria-hidden="true"></i></a>
   <style>
     .pop-up {
