@@ -7,7 +7,7 @@ RECV_MANDATORY_CODE = 0
 
 @msg(adm = "adminAssign")
 def add_admin_mandatory(update,user):
-    update.message.reply_text(f"È stato creato un mandato per diventare admin 😎\nCodice Accettazione Mandato: {db.create_mandatory(user)} ⚠️\nIl mandato scadrà tra {db.MANDATORY_TIME_LIMIT} minuto/i ⏱️")
+    update.message.reply_text(f"È stato creato un mandato per diventare admin 😎\nComando di accettazione: /join {db.create_mandatory(user)} ⚠️\nIl mandato scadrà tra {db.MANDATORY_TIME_LIMIT} minuto/i ⏱️")
 
 @msg(bypass_maintenance=True)
 def mandatory_accept(update,user):

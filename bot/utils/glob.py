@@ -148,11 +148,14 @@ This allow to bypass virtualy the limit setted by telegram
 This is implemented in the Jcallback Class in utils.db
 """
 class JCallB:
+    
     def __init__(self,id=""):
+        from utils.db import JCallbackHash
+        self.id_max_len = 64-JCallbackHash.hash_bytes
         if "|" in id:
             raise Exception("Invalid character '|' for jcallback")
-        if len(id) > 20:
-            raise Exception("Max lenght for the callback id length is 20")
+        if len(id) > self.id_max_len:
+            raise Exception(f"Max lenght for the callback id length is {self.id_max_len}")
         self.__id = id
     
     def id(self):
@@ -160,14 +163,15 @@ class JCallB:
 
     def create(self,data:dict):
         from utils.db import JCallbackHash
-        return self.__id.ljust(20,"|")+JCallbackHash(data).hash
+        return self.__id.ljust(self.id_max_len,"|")+JCallbackHash(data).hash
 
     def parse(self,data:str):
         from utils.db import JCallbackHash
         try:
-            return JCallbackHash(hash=data[20:]).json()
+            return JCallbackHash(hash=data[-JCallbackHash.hash_bytes:]).data
         except TypeError:
             return None
     
     def regex_filter(self):
-        return "^"+re.escape(self.__id.ljust(20,"|"))+"[A-Za-z0-9+/=]{44}$"
+        from utils.db import JCallbackHash
+        return r"^"+re.escape(self.__id.ljust(self.id_max_len,"|"))+r"[\x00-\xFF]{"+str(JCallbackHash.hash_bytes)+r"}$"

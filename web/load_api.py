@@ -68,12 +68,12 @@ async def cors_middleware(request: Request, call_next):
 @app.get("/docs/pid/{pid}")
 async def search_pid_info(pid: str):
     """Give informations about the pid sended"""
-    return await DB["pids"].find_one({"id":pid},{"_id":False})
+    return await DB["pids"].find_one({"_id":pid})
 
 @app.get("/docs/pid/{pid}/all")
 async def get_all_docs_in_pid(pid: str):
     """Give a list of documents in the pid selected sorted by date"""
-    return await mongolist(DB["docs"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING))
+    return await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING))
 
 @app.get("/docs/pid/{pid}/len")
 async def count_docs_in_pid(pid: str):
@@ -83,14 +83,14 @@ async def count_docs_in_pid(pid: str):
 @app.get("/docs/pid/{pid}/index/{index}")
 async def get_doc_in_pid_by_index(pid: str,index: int):
     """Select a document in a pid by its position in time with an index"""
-    try: return (await mongolist(DB["docs"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
+    try: return (await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/docs/pid/{pid}/range/{index_from}/{index_to}")
 async def get_range_of_docs_in_pid(pid: str,index_from: int,index_to: int):
     """Give a range of documents in a pid starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/docs/pid/{pid}/search/{search_text}")
 async def search_document_in_pid_by_text(pid: str, search_text: str):
@@ -100,17 +100,17 @@ async def search_document_in_pid_by_text(pid: str, search_text: str):
         search_text["pid"] = pid
     except Exception:
         raise HTTPException(status_code=404, detail="Invalid search text encoding, please encode with urlsafe/b64decode!")
-    return await mongolist(DB["docs"].find(search_text,{"_id":False}).sort("date",DESCENDING))
+    return await mongolist(DB["docs"].find(search_text).sort("date",DESCENDING))
 
 @app.get("/docs/all")
 async def get_all_docs():
     """Receve all existing docs in the DB sorted by date"""
-    return await mongolist(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING))
+    return await mongolist(DB["docs"].find({}).sort("date",ASCENDING))
 
 @app.get("/docs/match/{match_id}")
 async def get_by_match(match_id: str):
     """Get the document using the match id"""
-    return await DB["docs"].find_one({"match":match_id},{"_id":False})
+    return await DB["docs"].find_one({"_id":match_id})
 
 @app.get("/docs/len")
 async def count_docs():
@@ -120,19 +120,19 @@ async def count_docs():
 @app.get("/docs/index/{index}")
 async def get_doc_by_index(index: int):
     """Select a document by its position in time with an index"""
-    try: return (await mongolist(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
+    try: return (await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!") 
 
 @app.get("/docs/range/{index_from}/{index_to}")
 async def get_range_of_docs(index_from: int,index_to: int):
     """Give a range of documents starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/docs/pids")
 async def pids_info():
     """List of all pids"""
-    return await mongolist(DB["pids"].find({},{"_id":False}))
+    return await mongolist(DB["pids"].find({}))
 
 @app.get("/docs/search/{search_text}")
 async def search_document_by_text(search_text: str):
@@ -141,7 +141,7 @@ async def search_document_by_text(search_text: str):
         search_text = search_transform(urlsafe_b64decode(search_text).decode())
     except Exception:
         raise HTTPException(status_code=404, detail="Invalid search text encoding, please encode with urlsafe/b64decode!")
-    return await mongolist(DB["docs"].find(search_text,{"_id":False}).sort("date",DESCENDING))
+    return await mongolist(DB["docs"].find(search_text).sort("date",DESCENDING))
 
 @app.get("/events/len")
 async def count_events():
@@ -151,22 +151,22 @@ async def count_events():
 @app.get("/events/all")
 async def get_all_events():
     """Get the complete list of events"""
-    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING))
+    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING))
 
 @app.get("/events/index/{index}")
 async def get_event_by_index(index: int):
     """Get event by an index ordered by date"""
-    try: return (await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
+    try: return (await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/events/range/{index_from}/{index_to}")
 async def events_range(index_from: int, index_to: int):
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/events/update/{last_index}")
 async def events_update(last_index: int):
-    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(last_index))
+    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(last_index))
 
 @app.get("/events/pid/{pid}/len")
 async def pid_events_len(pid:str):
@@ -175,33 +175,33 @@ async def pid_events_len(pid:str):
 @app.get("/events/pid/{pid}/all")
 async def get_all_events_in_pid(pid: str):
     """get all events saved in a pid"""
-    return await mongolist(DB["docs_events"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING))
+    return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING))
 
 @app.get("/events/pid/{pid}/index/{index}")
 async def get_event_by_index_in_pid(pid: str, index: int):
     """Get events in a range in pid"""
-    try: return (await mongolist(DB["docs_events"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
+    try: return (await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/events/pid/{pid}/range/{index_from}/{index_to}")
 async def get_events_range_in_pid(pid: str, index_from: int, index_to: int):
     """Get events in a range in pid"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs_events"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/events/pid/{pid}/update/{last_index}")
 async def events_updates_in_pid(pid: str, last_index: int):
     """Recieve last updates with the last length saved in pid"""
-    return await mongolist(DB["docs_events"].find({"pid":pid},{"_id":False}).sort("date",ASCENDING).skip(last_index))
+    return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(last_index))
 
 @app.get("/view/{match_id}", response_class=HTMLResponse)
 async def pdf_viewer(request: Request, match_id: str):
     """PDF viewer of attachment selected by match id"""
-    doc = await DB["docs"].find_one({"match":match_id})
+    doc = await DB["docs"].find_one({"_id":match_id})
     if doc is None or doc["attachment"] is None or doc["attachment"]["download"] is None:
         return render("invalid_doc.html",{"request": request, "public_url": PUBLIC_LINK})
     if doc["attachment"]["name"] is None or os.path.splitext(doc["attachment"]["name"])[1].lower() != ".pdf":
-        return RedirectResponse(url='/download/'+doc["match"])
+        return RedirectResponse(url='/download/'+doc["_id"])
     return render("pdf_reader.html", {"request": request, "doc": doc, "public_url": PUBLIC_LINK})
 
 lock_download_file = asyncio.Lock()
@@ -243,7 +243,7 @@ async def aioproxy_stream(url):
 @app.get('/download/{match_id}')
 async def download_attachments(match_id: str):
     """Download document attachment (using proxy or cached file)"""
-    doc = await DB["docs"].find_one({"match":match_id})
+    doc = await DB["docs"].find_one({"_id":match_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Invalid match id!")
     if doc["attachment"] is None or doc["attachment"]["download"] is None:
@@ -267,7 +267,7 @@ async def download_attachments(match_id: str):
 @app.get("/")
 async def web_view(request: Request):
     """Main page of the web platform"""
-    customer = await DB["static"].find_one({"id":"updater"})
+    customer = await DB["static"].find_one({"_id":"updater"})
     customer = customer["customer_name"] if "customer_name" in customer else None
     return render("index.html", {"request": request, "customer_name": customer, "pids": await mongolist(DB["pids"].find({})) ,"public_url": PUBLIC_LINK})
 

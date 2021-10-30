@@ -124,8 +124,8 @@ class DocData:
 
     def __iter__(self):
         yield from {
+            "_id": self.match_id(),
             "pid": self.pid.id,
-            "match": self.match_id(),
             "description": self.description,
             "note": self.note,
             "date": self.date,

@@ -3,7 +3,7 @@ import os, html
 from utils import config as conf, db
 
 def viewer_link(doc:dict):
-    return os.path.join(os.path.join(conf.EXTERNAL_API,"view"),doc["match"])
+    return os.path.join(os.path.join(conf.EXTERNAL_API,"view"),doc["_id"])
 
 def get_text_circolare(data):
     note = "Nessuna nota disponibile!" if data['note'] is None else data['note']
@@ -27,12 +27,12 @@ def get_prefix(str_list):
     res = ""
     for ele in str_list:
         if ele is None: continue
-        elif type(ele) == str:
+        elif isinstance(ele, str):
             res += ele
-        elif type(ele) == int:
+        elif isinstance(ele, int):
             if ele in conf.STATIC_STRINGS.keys():
                 res += conf.STATIC_STRINGS[ele]
-        elif type(ele) == list:
+        elif isinstance(ele, list):
             res+=get_prefix(ele)
         res+="\n"
     if len(res) > 0: res = res[:-1]
@@ -56,17 +56,17 @@ def send_doc(callback,feed):
         if len(feed["list"]) == 0: return callback("I documenti in questa lista sono stati eliminati! 🚫")
         if not "page" in feed.keys() or feed['page'] < 0 or feed["page"] >= len(feed["list"]):
             feed["page"] = 0
-        if type(feed['list'][feed['page']]) == str:
+        if isinstance(feed['list'][feed['page']], str):
             doc_data = db.Docs.match(feed['list'][feed['page']])
         elif "doc" not in feed['list'][feed['page']].keys():
             doc_data = feed['list'][feed['page']]
-            feed['list'][feed['page']] = feed['list'][feed['page']]["match"]
-        elif type(feed['list'][feed['page']]['doc']) == str:
+            feed['list'][feed['page']] = feed['list'][feed['page']]["_id"]
+        elif isinstance(feed['list'][feed['page']]['doc'], str):
             doc_data = db.Docs.match(feed['list'][feed['page']]['doc'])
             header_doc = feed['list'][feed['page']]['header'] if "header" in feed['list'][feed['page']].keys() else None
         else:
             doc_data = feed['list'][feed['page']]['doc']
-            feed['list'][feed['page']]['doc'] = feed['list'][feed['page']]['doc']["match"] 
+            feed['list'][feed['page']]['doc'] = feed['list'][feed['page']]['doc']["_id"] 
             header_doc = feed['list'][feed['page']]['header'] if "header" in feed['list'][feed['page']].keys() else None
 
         if doc_data is None:

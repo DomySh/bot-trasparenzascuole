@@ -15,7 +15,7 @@ def get_cached_events_len():
 """
 Update callback
 
-{ "type":"list_scroll", "list":[{"header":""/0,"doc":{...}},{"header":""/0,"doc":"match"},...], "header":""/0}
+{ "type":"list_scroll", "list":[{"header":""/0,"doc":{...}},{"header":""/0,"doc":"_id"},...], "header":""/0}
 
 if there is ""/0 it means that there will be or a string or a number for identify a static string encoded in the code
 """
@@ -24,7 +24,11 @@ def send_message_bcast(user, docs_feed):
         msg = glob.sendmsg(user.id(),*argv,**kargs)
         metadata = {"chat_id":msg.chat.id, "message_id":msg.message_id,"callback_data":glob.JCallB().create(docs_feed)} if len(docs_feed["list"]) > 1 else {"chat_id":msg.chat.id, "message_id":msg.message_id}
         for doc in docs_feed["list"]:
-            db.FeedMsg.add_msg_feed(doc["doc"],metadata)
+            print(metadata)
+            if isinstance(doc,dict):
+                db.FeedMsg.add_msg_feed(doc["doc"],metadata)
+            else:
+                db.FeedMsg.add_msg_feed(doc,metadata)
     funcs.send_doc(send_func,docs_feed)
 
 def reload_callback(msg):
@@ -69,7 +73,7 @@ def check_updates():
         if db.get_pid_name(update["pid"]) is None:
             continue
         if update["type"] == "ADD":
-            docs_update+=[{"header":None,"doc":ele} for ele in update["target"] if ele not in deleted_match]
+            docs_update+=[ele for ele in update["target"] if ele not in deleted_match]
         elif update["type"] == "UPDATE":
             docs_update+=[{"header":3,"doc":ele} for ele in update["target"] if ele not in deleted_match]
             delete_feeds(update["target"])
@@ -80,7 +84,10 @@ def check_updates():
     del deleted_match
     if len(docs_update) > 0:
         update_callback = {"type":"list_scroll", "list":docs_update, "header":2 if len(docs_update) == 1 else 1}
-        update_callback["list"][0]["doc"] = db.Docs.match(update_callback["list"][0]["doc"])
+        if isinstance(update_callback["list"][0],dict):
+            update_callback["list"][0]["doc"] = db.Docs.match(update_callback["list"][0]["doc"])
+        else:
+            update_callback["list"][0] = db.Docs.match(update_callback["list"][0])
         glob.use_threads_bcast(lambda x: send_message_bcast(x,update_callback),db.TelegramUser.get_all_users())
 
 def update_docs():

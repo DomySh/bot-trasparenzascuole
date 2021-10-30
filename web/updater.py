@@ -35,7 +35,7 @@ DB data managment
 docs:
     {
         "pid": "pid_id", #Index 
-        "match": "match_id", #index Unique
+        "_id": "match_id", #index Unique
         "description": "description",
         "note": "notes",
         "n_doc": "number of document", #Index
@@ -52,7 +52,7 @@ docs:
 pids:
     {
         "pid": "bacheca_id" #index Unique,
-        "id": "md5_id" #Index Unique
+        "_id": "md5_id" #Index Unique
         "name": "name of the bacheca",
         "rss_count": "RSS line feed count" 
     }
@@ -64,7 +64,7 @@ docs_events:
     }
 static:
     {
-        "id":"updater",
+        "_id":"updater",
         ...
     }
 """
@@ -76,7 +76,7 @@ def delete_data_file(match_id):
             os.remove(path_file)
 
 def update_doc(doc):
-    DB["docs"].update_one({"match":doc.match_id()},{"$set":dict(doc)})
+    DB["docs"].update_one({"_id":doc.match_id()},{"$set":dict(doc)})
     delete_data_file(doc.match_id())
     return doc.match_id()
 
@@ -85,18 +85,18 @@ def download_and_update(pid:circolari.Bacheca):
     docs = pid.download_data()
     cached_docs = list(DB["docs"].find({"pid":pid.id}))
     docs_match = [ele.match_id() for ele in docs]
-    cached_docs_match = [ele["match"] for ele in cached_docs]
+    cached_docs_match = [ele["_id"] for ele in cached_docs]
     #Search for deletions
     to_delete = [ele for ele in cached_docs_match if ele not in docs_match]
     if len(to_delete) > 0:
         for ele in to_delete: delete_data_file(ele)
-        DB["docs"].delete_many({"match":{"$in":to_delete}})
+        DB["docs"].delete_many({"_id":{"$in":to_delete}})
         DB["docs_events"].insert_one({"date":datetime.now(),"type":"DELETE","target":to_delete,"pid":pid.id})
     #Searching for updates
     update_list = []
     for doc in docs:
         for doc_cached in cached_docs:
-            if doc_cached["match"] == doc.match_id():
+            if doc_cached["_id"] == doc.match_id():
                 if doc_cached["attachment"]["hash"]["digest"].strip().lower() != doc.hash.strip().lower():
                     print(doc.match_id(),doc_cached["attachment"]["hash"]["digest"].strip().lower(),"!=",doc.hash.strip().lower())
                     update_list.append(update_doc(doc))
@@ -110,45 +110,40 @@ def download_and_update(pid:circolari.Bacheca):
 def db_init_collections():
     DB["docs"].create_indexes([
         IndexModel([("pid",ASCENDING)]),
-        IndexModel([("match",ASCENDING)],unique=True),
         IndexModel([("date",ASCENDING)]),
         IndexModel([("keywords",TEXT)],default_language="it"),
     ])
     DB["pids"].create_indexes([
-        IndexModel([("id",ASCENDING)],unique=True),
         IndexModel([("name",TEXT)])
     ])
     DB["docs_events"].create_indexes([
         IndexModel([("date",ASCENDING)])
     ])
-    DB["static"].create_indexes([
-        IndexModel([("id",ASCENDING)],unique=True),
-    ])
 
 def get_settings():
-    settings = DB["static"].find_one({"id":"updater"})
+    settings = DB["static"].find_one({"_id":"updater"})
     if settings is None:
-        DB["static"].insert_one({"id":"updater"})
-        settings = {"id":"updater"}
+        DB["static"].insert_one({"_id":"updater"})
+        settings = {"_id":"updater"}
     return settings
 
 def update_settings(settings):
-    DB["static"].update_one({"id":"updater"},{"$set":settings})
+    DB["static"].update_one({"_id":"updater"},{"$set":settings})
 
 def update_pids(settings):
     pids = AXIOS.pids()
-    for ele in DB["pids"].find({"id":{"$nin":[ele.id for ele in pids]}}):
+    for ele in DB["pids"].find({"_id":{"$nin":[ele.id for ele in pids]}}):
         if API_CACHE_ATTACHMENTS:
-            for doc_to_del in DB["docs"].find({"pid":ele["id"]}):
-                delete_data_file(doc_to_del["match"])
-        DB["docs"].delete_many({"pid":ele["id"]})
-    DB["pids"].delete_many({"id":{"$nin":[ele.id for ele in pids]}})
+            for doc_to_del in DB["docs"].find({"pid":ele["_id"]}):
+                delete_data_file(doc_to_del["_id"])
+        DB["docs"].delete_many({"pid":ele["_id"]})
+    DB["pids"].delete_many({"_id":{"$nin":[ele.id for ele in pids]}})
     synced_pids =  [ele["pid"] for ele in list(DB["pids"].find({}))]
     for pid in pids:
         if pid.pid not in synced_pids:
-            DB["pids"].insert_one({"pid":pid.pid,"id":pid.id,"name":pid.name,"rss_count":0})
+            DB["pids"].insert_one({"pid":pid.pid,"_id":pid.id,"name":pid.name,"rss_count":0})
         else:
-            DB["pids"].update_one({"id":pid.id},{"$set":{"name":pid.name}})
+            DB["pids"].update_one({"_id":pid.id},{"$set":{"name":pid.name}})
     settings["last_pid_updates"] = datetime.now()
     settings["customer_name"] = AXIOS.name()
     
@@ -166,16 +161,16 @@ def check_pids_expire():
     update_settings(settings)
 
 def force_pids_update():
-    DB["static"].update_one({"id":"updater"},{"$unset":{"last_pid_updates":""}})
+    DB["static"].update_one({"_id":"updater"},{"$unset":{"last_pid_updates":""}})
 
 def check_and_update_pids():
     for pid in AXIOS.pids():
-        cached_rss_count = DB["pids"].find_one({"id":pid.id})["rss_count"]
+        cached_rss_count = DB["pids"].find_one({"_id":pid.id})["rss_count"]
         online_rss_count = pid.rss_count()
         if cached_rss_count != online_rss_count:
             try:
                 download_and_update(pid)
-                DB["pids"].update_one({"id":pid.id},{"$set":{"rss_count":online_rss_count}})
+                DB["pids"].update_one({"_id":pid.id},{"$set":{"rss_count":online_rss_count}})
             except Exception:
                 force_pids_update()
                 traceback.print_exc()
