@@ -98,7 +98,6 @@ def download_and_update(pid:circolari.Bacheca):
         for doc_cached in cached_docs:
             if doc_cached["_id"] == doc.match_id():
                 if doc_cached["attachment"]["hash"]["digest"].strip().lower() != doc.hash.strip().lower():
-                    print(doc.match_id(),doc_cached["attachment"]["hash"]["digest"].strip().lower(),"!=",doc.hash.strip().lower())
                     update_list.append(update_doc(doc))
     if len(update_list) > 0:
         DB["docs_events"].insert_one({"date":datetime.now(),"type":"UPDATE","target":update_list,"pid":pid.id})

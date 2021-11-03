@@ -36,20 +36,22 @@ MANDATORY_DIGITS = 6
 
 class JCallbackHash:
     hash_bytes = 44
-    def __init__(self,data=None,hash=None):
+    def __init__(self,data=None,hash_data=None):
         if not data is None:
-            self.data = data
-            self.hash = sha256(json.dumps(data).encode()).digest()
-            try:
-                DB["callback_data_hash"].insert_one({"_id":self.hash, "data":self.data, "created":datetime.now()})
-            except DuplicateKeyError:
-                DB["callback_data_hash"].update_one({"_id":self.hash},{"$set":{"created":datetime.now()}})
-        elif not hash is None:
-            self.hash = b64decode(hash)
-            self.data = DB["callback_data_hash"].find_one({"_id":self.hash})["data"]
+            self.data = json.dumps(data, sort_keys=True)
+            self.hash = sha256(self.data.encode()).digest()
+            self.hash = b64encode(self.hash).decode()
+            DB["callback_data_hash"].update_one(
+                {"_id":self.hash},
+                {
+                    "$set":{"created":datetime.now()},
+                    "$setOnInsert":{"data":self.data}
+                },upsert=True)
+        elif not hash_data is None:
+            self.hash = hash_data
+            self.data = json.loads(DB["callback_data_hash"].find_one({"_id":self.hash})["data"])
         else:
             raise Exception("Invalid JCallback builder called! insert at least an option")
-        self.hash = b64encode(self.hash).decode()
 def init():
     DB["users"].create_indexes([
         IndexModel([("admin",ASCENDING)]),

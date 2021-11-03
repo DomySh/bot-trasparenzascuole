@@ -168,7 +168,7 @@ class JCallB:
     def parse(self,data:str):
         from utils.db import JCallbackHash
         try:
-            return JCallbackHash(hash=data[-JCallbackHash.hash_bytes:]).data
+            return JCallbackHash(hash_data=data[self.id_max_len:]).data
         except TypeError:
             return None
     

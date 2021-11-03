@@ -215,22 +215,27 @@ async def download_doc(url,path_file):
             await f.write(chunk)
 
 async def add_download_lock(match_id):
+    selected_lock = None
+    
     async with lock_download_file:
         if match_id in lock_match.keys():
             lock_match[match_id]["count"]+=1
-            await lock_match[match_id]["lock"].acquire()
-            return False
+            selected_lock = lock_match[match_id]["lock"]
         else:
             lock_match[match_id] = {"lock":asyncio.Lock(),"count":1}
             await lock_match[match_id]["lock"].acquire()
-            return True
+    
+    if selected_lock is None:
+        return True
+    else:
+        await selected_lock.acquire()
+        return False
 
 async def remove_download_lock(match_id):
     async with lock_download_file:
         if match_id in lock_match.keys():
             lock_match[match_id]["lock"].release()
-            if lock_match[match_id]["count"] > 0:
-                lock_match[match_id]["count"]-=1
+            lock_match[match_id]["count"]-=1
             if lock_match[match_id]["count"] <= 0:
                 del lock_match[match_id]
 

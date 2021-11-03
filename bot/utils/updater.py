@@ -24,7 +24,6 @@ def send_message_bcast(user, docs_feed):
         msg = glob.sendmsg(user.id(),*argv,**kargs)
         metadata = {"chat_id":msg.chat.id, "message_id":msg.message_id,"callback_data":glob.JCallB().create(docs_feed)} if len(docs_feed["list"]) > 1 else {"chat_id":msg.chat.id, "message_id":msg.message_id}
         for doc in docs_feed["list"]:
-            print(metadata)
             if isinstance(doc,dict):
                 db.FeedMsg.add_msg_feed(doc["doc"],metadata)
             else:
