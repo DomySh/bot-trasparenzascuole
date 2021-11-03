@@ -49,7 +49,10 @@ class JCallbackHash:
                 },upsert=True)
         elif not hash_data is None:
             self.hash = hash_data
-            self.data = json.loads(DB["callback_data_hash"].find_one({"_id":self.hash})["data"])
+            try:
+                self.data = json.loads(DB["callback_data_hash"].find_one({"_id":self.hash})["data"])
+            except Exception:
+                self.data = None
         else:
             raise Exception("Invalid JCallback builder called! insert at least an option")
 def init():
