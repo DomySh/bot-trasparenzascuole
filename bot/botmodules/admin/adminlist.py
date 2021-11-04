@@ -57,14 +57,16 @@ def execute_admin_action(update,user,data):
         usr = db.TelegramUser(data["id"])
         if data["operation"] == DELETE_ADMIN:
             usr.remove_admin()
+            return get_admin_list(update.message.edit_message_text)
         elif data["operation"] == ALLOW_PERM:
             usr.add_permission(data["target"])
+            return show_admin_infos(update,user,{"id":data["id"]}) 
         elif data["operation"] == DENY_PERM:
             usr.remove_permission(data["target"])
+            return show_admin_infos(update,user,{"id":data["id"]}) 
         else:
             update.message.edit_message_text("Errore nella callback, si prega di riprovare! 🚫")
             return ConversationHandler.END
-        update.message.edit_message_text("Operazione completata! ✅")
     except (KeyError, TypeError):
         update.message.edit_message_text("Errore nella callback, si prega di riprovare! 🚫")
         traceback.print_exc()
@@ -102,6 +104,9 @@ def confirm_admin_action(update,user,data):
 
 @msg(adm = "adminAssign",jcallb=True)
 def show_admin_action(update,user,data):
+    show_admin_infos(update,user,data)
+
+def show_admin_infos(update,user,data):
     try:
         usr = db.TelegramUser(data["id"])
         text =  f"⚠️ Impostazioni admin ⚠️\n\n"
@@ -126,7 +131,7 @@ def show_admin_action(update,user,data):
                 callback_data=CONFIRM_ADMIN_ACTION.create({"id":usr.id(),"operation":DELETE_ADMIN}
             )
         )])
-        keyb.append([InlineKeyboardButton("🚫 Annulla",callback_data="cancel")])
+        keyb.append([InlineKeyboardButton("❮❮ Indietro",callback_data=ADMIN_LIST_SCROLL.create({"goto":1}))])
         keyb = InlineKeyboardMarkup(keyb)
         update.message.edit_message_text(text,reply_markup=keyb)
     except (KeyError, TypeError):
@@ -136,19 +141,18 @@ def show_admin_action(update,user,data):
 
 @msg(adm = "adminAssign")
 def request_admin_list(update,user):
-    page = 1
+    return get_admin_list(update.message.reply_text)
+
+def get_admin_list(sendmsg,page=1):
     infos,max_pages = get_user_list_in_pages(page)
     text,mk = build_list_page_message(infos,page,max_pages)
-    update.message.reply_text(text,reply_markup=mk)
+    sendmsg(text,reply_markup=mk)
     return ConversationHandler.END
 
 @msg(adm = "adminAssign", jcallb=True)
 def callback_admin_list(update,user,data):
     try:
-        page = data["goto"]
-        infos,max_pages = get_user_list_in_pages(page)
-        text,mk = build_list_page_message(infos,page,max_pages)
-        update.message.edit_message_text(text,reply_markup=mk)
+        return get_admin_list(update.message.edit_message_text, page=data["goto"])
     except (KeyError, TypeError):
         update.message.edit_message_text("Errore nella callback, si prega di riprovare! 🚫")
         traceback.print_exc()
