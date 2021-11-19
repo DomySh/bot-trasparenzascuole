@@ -331,6 +331,7 @@ async function reload() {
 
     button.textContent = "INVIA";
     button.disabled = false;
+    twemoji.parse(document.body);
 
 
 }
