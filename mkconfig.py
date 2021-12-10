@@ -191,7 +191,7 @@ def api_public_link():
     while True:
         print("[[ API_WEB_PUBLIC ]]\nInserisci l'indirizzo pubblico da cui è sarà possibile accedere alla piattaforma WEB\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/README.md")
         res = input("> ")
-        if re.match(r"^http(s)?:\/\/[(?a-zA-Z0-9@:%._\+~#=]+\.[a-z]{2,}(\/)?$",res):
+        if re.match(r"^http(s)?:\/\/(.*)(\/)?$",res):
             yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL={res}")
             yaml_json["services"]["web"]["environment"].append(f"API_AXIOS_DATA_LINK={res}")
             break

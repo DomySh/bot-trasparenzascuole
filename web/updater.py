@@ -1,15 +1,17 @@
 from datetime import datetime
+import hashlib, binascii
 import circolari, os, traceback, time
 from pymongo import MongoClient, IndexModel, ASCENDING, TEXT
+from os.path import join as pjoin
 from pathlib import Path
-
 
 AXIOS = circolari.TrasparenzeScuoleMap(os.environ["AXIOS_CUSTOMER_ID"])
 AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*1))
 UPDATE_FREQUENCY = int(os.getenv("AXIOS_UPDATER_FREQUENCY",60*3))
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
-
+DATA_DIR = Path(__file__).parent.absolute() / "data"
 DB_CONN = None
+DEBUG = os.getenv("DEBUG","False").lower() in ("true","t","y","yes","1")
 DBNAME = "main"
 if os.getenv("EXTERNAL_MONGO","False").lower() in ("true","t","y","yes","1"):
     IP_MONGO_AUTH = os.environ["IP_MONGO_AUTH"]
@@ -71,9 +73,27 @@ static:
 
 def delete_data_file(match_id):
     if API_CACHE_ATTACHMENTS:
-        path_file = Path(__file__).parent.absolute() / "data" / (match_id+".pdf")
+        path_file = pjoin(DATA_DIR,match_id)
         if os.path.exists(path_file):
             os.remove(path_file)
+
+def hash_check(match_id,hash):
+    with open(pjoin(DATA_DIR,match_id),"rb") as f:
+        content = f.read()
+    if hashlib.sha256(content).digest() != hash:
+        delete_data_file(match_id)
+
+
+def check_files():
+    files = set(os.listdir(DATA_DIR))
+    for doc in DB["docs"].find():
+        if doc["_id"] in files:
+            files.remove(doc["_id"])
+            if "hash" in doc["attachment"] and not doc["attachment"]["hash"] is None:
+                hash_check(doc["_id"],binascii.unhexlify(doc["attachment"]["hash"]["digest"]))
+    for ele in files:
+        delete_data_file(ele)
+
 
 def update_doc(doc):
     DB["docs"].update_one({"_id":doc.match_id()},{"$set":dict(doc)})
@@ -106,6 +126,7 @@ def download_and_update(pid:circolari.Bacheca):
     if len(to_add) > 0:
         DB["docs"].insert_many([dict(ele) for ele in to_add])
         DB["docs_events"].insert_one({"date":datetime.now(),"type":"ADD","target":[ele.match_id() for ele in to_add],"pid":pid.id})
+
 def db_init_collections():
     DB["docs"].create_indexes([
         IndexModel([("pid",ASCENDING)]),
@@ -175,6 +196,8 @@ def check_and_update_pids():
                 traceback.print_exc()
 
 def updater():
+    if API_CACHE_ATTACHMENTS:
+        check_files()
     try:
         db_init_collections()
         check_pids_expire()
@@ -186,4 +209,3 @@ if __name__ == "__main__":
     while True:
         updater()
         time.sleep(UPDATE_FREQUENCY)
-
