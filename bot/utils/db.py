@@ -232,11 +232,11 @@ class TelegramUser:
     
     @staticmethod
     def count_users():
-        return int(DB["users"].count({}))
+        return int(DB["users"].count_documents({}))
     
     @staticmethod
     def count_admins():
-        return int(DB["users"].count({"admin":{"$exists":True}}))
+        return int(DB["users"].count_documents({"admin":{"$exists":True}}))
     
 
 def index_range(index_from,index_to):
