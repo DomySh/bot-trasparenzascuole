@@ -151,22 +151,22 @@ async def count_events():
 @app.get("/events/all")
 async def get_all_events():
     """Get the complete list of events"""
-    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING))
+    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING))
 
 @app.get("/events/index/{index}")
 async def get_event_by_index(index: int):
     """Get event by an index ordered by date"""
-    try: return (await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(index).limit(1)))[0]
+    try: return (await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/events/range/{index_from}/{index_to}")
 async def events_range(index_from: int, index_to: int):
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/events/update/{last_index}")
 async def events_update(last_index: int):
-    return await mongolist(DB["docs_events"].find({}).sort("date",ASCENDING).skip(last_index))
+    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(last_index))
 
 @app.get("/events/pid/{pid}/len")
 async def pid_events_len(pid:str):
