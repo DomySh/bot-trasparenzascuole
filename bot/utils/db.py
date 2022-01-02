@@ -222,6 +222,9 @@ class TelegramUser:
 
     @staticmethod
     def get_all_users():
+        from utils import config as conf
+        if conf.settings("maintenance"):
+            return TelegramUser.get_all_admins()
         for ele in DB["users"].find({}):
             yield TelegramUser.load_by_data(ele)
     

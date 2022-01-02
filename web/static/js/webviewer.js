@@ -180,9 +180,10 @@ function quoteattr(s, preserveCR) {
 function build_tag(doc) {
     let date = null;
     if (doc.date != null){
-        date = Date.parse(doc.date)
-        date-=60*60*2*1000
-        date = new Date(date).toLocaleString('it-IT');
+        date = doc.date.split("T")
+        day = date[0].split("-").reverse();
+        time = date[1].split(":").slice(0,2)
+        date = day.join("/")+" "+time.join(":")
     }
     let text = `<div class="doc_div">
         <h5 class="pid_doc">${get_pid_name_by_id(doc.pid)}<span class="put_right">📝</span></h5>
