@@ -1,9 +1,8 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import DESCENDING, ASCENDING
-from fastapi import FastAPI, Request, HTTPException, Query
+from fastapi import FastAPI, Request, HTTPException, Path
 from fastapi.staticfiles import StaticFiles
-import os, re, uvicorn, asyncio, aiofiles, httpx
-from pathlib import Path
+import os, re, uvicorn, asyncio, aiofiles, httpx, pathlib
 from base64 import urlsafe_b64decode
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse, RedirectResponse
@@ -81,13 +80,13 @@ async def count_docs_in_pid(pid: str):
     return {"data": await DB["docs"].count_documents({"pid":pid})}
 
 @app.get("/docs/pid/{pid}/index/{index}")
-async def get_doc_in_pid_by_index(pid: str,index: int = Query(..., ge=0)):
+async def get_doc_in_pid_by_index(pid: str,index: int = Path(..., ge=0)):
     """Select a document in a pid by its position in time with an index"""
     try: return (await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/docs/pid/{pid}/range/{index_from}/{index_to}")
-async def get_range_of_docs_in_pid(pid: str,index_from: int = Query(..., ge=0),index_to: int = Query(..., ge=0)):
+async def get_range_of_docs_in_pid(pid: str,index_from: int = Path(..., ge=0),index_to: int = Path(..., ge=0)):
     """Give a range of documents in a pid starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
     return await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
@@ -118,13 +117,13 @@ async def count_docs():
     return {"data": await DB["docs"].count_documents({})}
 
 @app.get("/docs/index/{index}")
-async def get_doc_by_index(index: int = Query(..., ge=0)):
+async def get_doc_by_index(index: int = Path(..., ge=0)):
     """Select a document by its position in time with an index"""
     try: return (await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!") 
 
 @app.get("/docs/range/{index_from}/{index_to}")
-async def get_range_of_docs(index_from: int = Query(..., ge=0),index_to: int = Query(..., ge=0)):
+async def get_range_of_docs(index_from: int = Path(..., ge=0),index_to: int = Path(..., ge=0)):
     """Give a range of documents starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
     return await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to))
@@ -154,18 +153,18 @@ async def get_all_events():
     return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING))
 
 @app.get("/events/index/{index}")
-async def get_event_by_index(index: int = Query(..., ge=0)):
+async def get_event_by_index(index: int = Path(..., ge=0)):
     """Get event by an index ordered by date"""
     try: return (await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/events/range/{index_from}/{index_to}")
-async def events_range(index_from: int = Query(..., ge=0), index_to: int = Query(..., ge=0)):
+async def events_range(index_from: int = Path(..., ge=0), index_to: int = Path(..., ge=0)):
     index_from, index_to = index_range(index_from, index_to)
     return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/events/update/{last_index}")
-async def events_update(last_index: int = Query(..., ge=0)):
+async def events_update(last_index: int = Path(..., ge=0)):
     return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(last_index))
 
 @app.get("/events/pid/{pid}/len")
@@ -178,19 +177,19 @@ async def get_all_events_in_pid(pid: str):
     return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING))
 
 @app.get("/events/pid/{pid}/index/{index}")
-async def get_event_by_index_in_pid(pid: str, index: int = Query(..., ge=0)):
+async def get_event_by_index_in_pid(pid: str, index: int = Path(..., ge=0)):
     """Get events in a range in pid"""
     try: return (await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index).limit(1)))[0]
     except IndexError: raise HTTPException(status_code=404, detail="Invalid index!")
 
 @app.get("/events/pid/{pid}/range/{index_from}/{index_to}")
-async def get_events_range_in_pid(pid: str, index_from: int = Query(..., ge=0), index_to: int = Query(..., ge=0)):
+async def get_events_range_in_pid(pid: str, index_from: int = Path(..., ge=0), index_to: int = Path(..., ge=0)):
     """Get events in a range in pid"""
     index_from, index_to = index_range(index_from, index_to)
     return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
 
 @app.get("/events/pid/{pid}/update/{last_index}")
-async def events_updates_in_pid(pid: str, last_index: int = Query(..., ge=0)):
+async def events_updates_in_pid(pid: str, last_index: int = Path(..., ge=0)):
     """Recieve last updates with the last length saved in pid"""
     return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(last_index))
 
@@ -255,7 +254,7 @@ async def download_attachments(match_id: str):
         raise HTTPException(status_code=404, detail="No Download link found!")
     if API_CACHE_ATTACHMENTS:
         if re.match(r"^[a-zA-Z0-9-_]*$",match_id):
-            path_file = str(Path(__file__).parent.absolute() / "data" / match_id)
+            path_file = str(pathlib.Path(__file__).parent.absolute() / "data" / match_id)
             if not os.path.exists(path_file):
                 if await add_download_lock(match_id):
                     await download_doc(doc["attachment"]["download"],path_file)
