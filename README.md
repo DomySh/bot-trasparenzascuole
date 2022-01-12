@@ -73,7 +73,7 @@ docker-compose logs api
 
 ## Come funziona? 💡
 
-Il progetto è basato su [docker](https://www.docker.com/) che permette di avere una flessibilita e facilità di installazione alta, oltre che ad assicurare un alto livello di sicurezza elevato! Il cuore che batte all'interno del progetto è il database [Mongo DB](https://www.mongodb.com/) responsabile del salvataggio di tutti i documenti e dei dati degli utenti. Infine il progetto ha i 2 container che sviluppano le 2 principali funzionalità: Il bot telegram sviluppato in python e il Web server WSGI basato su gunicorn:flask che a suo interno avvia anche un daemon, responsabile della sincronizzazione dei dati con trasparenzascuole.it
+Il progetto è basato su [docker](https://www.docker.com/) che permette di avere una flessibilita e facilità di installazione alta, oltre che ad assicurare un alto livello di sicurezza elevato! Il cuore che batte all'interno del progetto è il database [Mongo DB](https://www.mongodb.com/) responsabile del salvataggio di tutti i documenti e dei dati degli utenti. Infine il progetto ha i 2 container che sviluppano le 2 principali funzionalità: Il bot telegram sviluppato in python e il Web server ASGI basato su uvicorn:fastapi che a suo interno avvia anche un daemon (scritto in python), responsabile della sincronizzazione dei dati con trasparenzascuole.it
 
 ## Credits
 - [Mozilla PDF.JS](https://mozilla.github.io/pdf.js/)
