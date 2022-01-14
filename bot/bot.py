@@ -21,10 +21,10 @@ def start_msg(update,user):
 def contact_msg(update,user):
     update.message.reply_text("Il bot è stato creato da <b>Domingo Dirutigliano</b>\n\n"
                             "🌍 Website: <a href=\"https://domysh.com/it/\">DomySh.com</a>\n"
-                            #"💸 Donazioni: <a href=\"https://donorbox.org/bot-trasparenzascuole\">LINK</a>\n"
+                            "💸 Donazioni: <a href=\"https://donorbox.org/bot-trasparenzascuole\">LINK</a>\n"
                             "📬 E-Mail: <a href=\"mailto://me@domysh.com\">me@domysh.com</a>\n"
                             "💬 Telegram: <a href=\"https://t.me/DomySh\">@DomySh</a>\n"
-                            #"💻 Codice Sorgente: <a href=\"https://github.com/DomySh/bot-trasparenzascuole\">domysh/bot-trasparenzascuole</a>"
+                            "💻 Codice Sorgente: <a href=\"https://github.com/DomySh/bot-trasparenzascuole\">domysh/bot-trasparenzascuole</a>"
                             ,parse_mode='HTML')
 
 
