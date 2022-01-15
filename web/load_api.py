@@ -293,6 +293,6 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=9999,
         reload=DEBUG,
-        access_log=DEBUG,
+        access_log=True,#DEBUG,
         workers=THREADS
     )
