@@ -284,7 +284,6 @@ async def aioproxy_tghook(headers,body,secret):
 if USE_WEBHOOK:
     @app.post('/hook/{hooksecret}')
     async def telegram_hook(hooksecret: str, request: Request):
-        print("HEADERS",request.headers)
         return await aioproxy_tghook(dict(request.headers),await request.body(),hooksecret)
 
 if __name__ == "__main__": 
@@ -293,6 +292,6 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=9999,
         reload=DEBUG,
-        access_log=True,#DEBUG,
+        access_log=DEBUG,
         workers=THREADS
     )
