@@ -42,7 +42,7 @@ def get_mongo_ip():
         if res.strip() != "":
             res = res.strip()
             if res.lower() in ("localhost","127.0.0.1"):
-                res = "host.docker.internal:host-gateway"
+                res = "host.docker.internal"
             yaml_json["services"]["bot"]["environment"].append(f"IP_MONGO_AUTH={res}")
             yaml_json["services"]["web"]["environment"].append(f"IP_MONGO_AUTH={res}")
             break 
@@ -151,15 +151,9 @@ della tuo server.""")
             yaml_json["services"]["bot"]["environment"].append(f"THREAD_FOR_BROADCASTING={int(res)}")
             break
 
-def webhook_choose():
-    print("[[ USE_TELEGRAM_WEHOOK ]]\nVuoi utilizzare i WebHook per il bot telegram?\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/doc/TG_WEBHOOK.md")
-    if y_or_n(True):
-        yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
-        yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
-    else:
-        yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
-        yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
-
+def set_webhook():
+    yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
+    yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
 
 def set_debug():
     print("[[ DEBUG ]]\nVuoi creare una configurazione per DEBUG?\nQuesta funzionerà disattiverà il webhook e attiverà in automatico la console di debug di flask, e la modalità di manutenzione.")
@@ -171,7 +165,8 @@ def set_debug():
         if "mongo" in yaml_json["services"].keys():
             yaml_json["services"]["mongo"]["ports"]=["127.0.0.1:27017:27017"]
         yaml_json["services"]["web"]["environment"].append("API_CACHE_ATTACHMENTS=0")
-        yaml_json["services"]["bot"]["environment"].append("TG_BOT_USE_WEBHOOK=0")
+        yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
+        yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
         global API_PORT
         yaml_json["services"]["bot"]["environment"].append(f"API_EXTERNAL_URL=http://127.0.0.1:{API_PORT}/")
         yaml_json["services"]["web"]["environment"].append(f"API_AXIOS_DATA_LINK=http://127.0.0.1:{API_PORT}/")
@@ -327,7 +322,7 @@ def handle():
     basic_infos()
     if not set_debug():
         api_public_link()
-        webhook_choose()   
+        set_webhook()   
         cache_attachments()
         ask_for_threads()
         updater_frequency()

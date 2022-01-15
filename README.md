@@ -24,7 +24,7 @@ Inizialmente dovrai creare il bot su telegram
 
 --- 
 
-#### 2. Configurazione Piattaforma Web + Webhook (Opzionale)
+#### 2. Configurazione Piattaforma Web
 
 Configura il tuo server per gestire la piattaforma web tramite un webproxy (ngnix, apache ecc...).
 Per il corretto funzionamento della piattaforma inoltre è necessario che il percorso base del webserver coincida con quello pubblico.
@@ -40,12 +40,6 @@ Al termine della configurazione del proxy assicurati di avere:
 - Indirizzo pubblico verso cui verrà indirizzata la richiesta (Es. http://documenti.scuola.edu.it/)
 
 [Esempio di configurazione con webproxy Ngnix](doc/NGNIX_CONFIG.md)
-
-<b>Configurazione Webhook (Opzionale, Consigliato)</b>
-
-Per evitare problemi nella comunicazione con telegram, e rendere reattivo il bot, è necessario configurare anche un proxy per il webhook di telegram
-
-[Guida sulla configurazione del webhook](doc/TG_WEBHOOK.md)
 
 ---
 
