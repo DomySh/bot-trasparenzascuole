@@ -285,7 +285,7 @@ if USE_WEBHOOK:
     @app.post('/hook/{hooksecret}')
     async def telegram_hook(hooksecret: str, request: Request):
         print("HEADERS",request.headers)
-        return await aioproxy_tghook(request.headers,await request.body(),hooksecret)
+        return await aioproxy_tghook(dict(request.headers),await request.body(),hooksecret)
 
 if __name__ == "__main__": 
     uvicorn.run(
