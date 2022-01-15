@@ -1,9 +1,16 @@
+import secrets
 from utils.glob import JCallB
 import os, html
 from utils import config as conf, db
 
 def viewer_link(doc:dict):
     return os.path.join(os.path.join(conf.EXTERNAL_API,"view"),doc["_id"])
+
+def hooklink(hooksecret):
+    return os.path.join(os.path.join(conf.EXTERNAL_API,"hook"),hooksecret)
+
+def hooksecret():
+    return secrets.token_hex(32)
 
 def get_text_circolare(data):
     note = "Nessuna nota disponibile!" if data['note'] is None else data['note']

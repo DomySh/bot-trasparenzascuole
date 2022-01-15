@@ -155,10 +155,10 @@ def webhook_choose():
     print("[[ USE_TELEGRAM_WEHOOK ]]\nVuoi utilizzare i WebHook per il bot telegram?\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/doc/TG_WEBHOOK.md")
     if y_or_n(True):
         yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
-        webhook_port()
-        webhook_url()
+        yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=1")
     else:
         yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
+        yaml_json["services"]["web"]["environment"].append(f"TG_BOT_USE_WEBHOOK=0")
 
 
 def set_debug():
@@ -208,14 +208,6 @@ a seguito i PDF saranno indipendenti dalla piattaform axios.""")
     else:
         yaml_json["services"]["web"]["environment"].append(f"API_CACHE_ATTACHMENTS=0")
 
-def webhook_url():
-    while True:
-        print("Inserisci l'indirizzo per l'acceso pubblico al server per la webhook\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/doc/TG_WEBHOOK.md")
-        res = input("> ")
-        if re.match(r"^http(s)?:\/\/[(?a-zA-Z0-9@:%._\+~#=]+\.[a-z]{2,}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$",res):
-            yaml_json["services"]["bot"]["environment"].append(f"TG_BOT_WEBHOOK_URL={res}")
-            break 
-
 def send_alerts_to_admin():
     print("""[[ SEGNAL_ADMIN_EXCEPTION ]]\nDurante l'esecuzione del bot le eccezioni vengono catturate e segnalate all'utente,
 se desideri che le eccezioni vengano segnalate anche al super amministratore abilita questa funzione
@@ -244,14 +236,6 @@ def web_platform_port():
         if res.isdecimal() and int(res)>=0 and int(res)<=65535:
             API_PORT = int(res)
             yaml_json["services"]["web"]["ports"]=[f"127.0.0.1:{int(res)}:9999"]
-            break
-
-def webhook_port():
-    while True:
-        print("[[ WEBHOOK_PORT ]]\nScegli su quale porta avviare (sull'interfaccia 127.0.0.1) la webhook\nDocumentazione: https://github.com/DomySh/bot-trasparenzascuole/blob/main/doc/TG_WEBHOOK.md")
-        res = input("> ")
-        if res.isdecimal() and int(res)>=0 and int(res)<=65535:
-            yaml_json["services"]["bot"]["ports"]=[f"127.0.0.1:{int(res)}:9999"]
             break
 
 def axios_customer_id():

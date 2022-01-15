@@ -10,6 +10,7 @@ from fastapi.background import BackgroundTasks
 
 PUBLIC_LINK = os.environ["API_AXIOS_DATA_LINK"].strip()
 if PUBLIC_LINK.endswith("/"): PUBLIC_LINK = PUBLIC_LINK[:-1]
+USE_WEBHOOK = os.getenv("TG_BOT_USE_WEBHOOK","False").lower() in ("true","t","1","yes","y")
 
 DB_CONN = None
 DBNAME = "main"
@@ -241,7 +242,6 @@ async def remove_download_lock(match_id):
 async def aioproxy_stream(url):
     req = httpc.build_request("GET",url)
     resp = await httpc.send(req, stream=True)
-
     return StreamingResponse(resp.aiter_bytes(),headers={"Content-Disposition":resp.headers['Content-Disposition']}, media_type=resp.headers['content-type'], status_code=resp.status_code)
 
 @app.get('/download/{match_id}')
@@ -274,6 +274,17 @@ async def web_view(request: Request):
     customer = await DB["static"].find_one({"_id":"updater"})
     customer = customer["customer_name"] if "customer_name" in customer else None
     return render("index.html", {"request": request, "customer_name": customer, "pids": await mongolist(DB["pids"].find({})) ,"public_url": PUBLIC_LINK})
+
+async def aioproxy_tghook(headers,body,secret):
+    request = httpx.AsyncClient(headers=headers)
+    req = request.build_request("POST",f"http://bot:9999/{secret}",content=body)
+    resp = await httpc.send(req, stream=True)
+    return StreamingResponse(resp.aiter_bytes(),headers=resp.headers, status_code=resp.status_code)
+
+if USE_WEBHOOK:
+    @app.post('/hook/{hooksecret}')
+    async def telegram_hook(hooksecret: str, request: Request):
+        return aioproxy_tghook(request.headers,await request.body(),hooksecret)
 
 if __name__ == "__main__": 
     uvicorn.run(

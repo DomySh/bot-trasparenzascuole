@@ -4,11 +4,7 @@ from threading import Lock
 ADMIN_ID = int(os.environ["TG_ADMIN_ID"])
 TOKEN = os.environ["TG_BOT_TOKEN"]
 
-WEBHOOK_URL = None
-
 USE_WEBHOOK = os.getenv("TG_BOT_USE_WEBHOOK","False").lower() in ("true","t","1","yes","y")
-if USE_WEBHOOK:
-    WEBHOOK_URL = os.environ["TG_BOT_WEBHOOK_URL"]
 
 EXTERNAL_API = os.environ["API_EXTERNAL_URL"]
 

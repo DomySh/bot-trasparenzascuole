@@ -2,6 +2,7 @@ import importlib
 from utils import updater as update_job
 import utils.glob as glob
 import utils.config as conf
+import utils.funcs as func
 from utils import db
 from telegram.ext import (Updater, CommandHandler,
                             MessageHandler, Filters, ConversationHandler,
@@ -79,11 +80,13 @@ def init():
 def run_bot_loop():
     if not conf.DEBUG:
         if conf.USE_WEBHOOK:
+            hook_secret = func.hooksecret()
+            #WEBHOOK_URL
             glob.updater.start_webhook(
                 listen="0.0.0.0",
                 port=9999,
-                url_path="/",
-                webhook_url=conf.WEBHOOK_URL
+                url_path=f"/{hook_secret}",
+                webhook_url=func.hooklink(hook_secret)
             )
         else:
             glob.updater.start_polling()
