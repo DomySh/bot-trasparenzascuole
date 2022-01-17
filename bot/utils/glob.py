@@ -20,7 +20,7 @@ def sendmsg(*args,**kargs):
             db.TelegramUser(args[0]).delete()
         except telegram.error.BadRequest:pass
         except Exception as e:
-            if "Timed out" in str(e): sendmsg(*args,**kargs)
+            if "Timed out" in str(e) or "Connection aborted" in str(e): sendmsg(*args,**kargs)
             updater.bot.send_message(int(conf.ADMIN_ID),f"Hey, è stata lanciata una Exception!\nError: {str(e)}\nDa sendmsg_function")
             traceback.print_exc()
     except Exception:pass #This func don't have to raise any kind of exception!
