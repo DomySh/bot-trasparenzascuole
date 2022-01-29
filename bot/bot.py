@@ -21,7 +21,7 @@ def start_msg(update,user):
 @glob.msg(bypass_maintenance = True)
 def contact_msg(update,user):
     update.message.reply_text("Il bot è stato creato da <b>Domingo Dirutigliano</b>\n\n"
-                            "🌍 Website: <a href=\"https://domysh.com/it/\">DomySh.com</a>\n"
+                            "🌍 Website: <a href=\"https://domysh.com/\">DomySh.com</a>\n"
                             "💸 Donazioni: <a href=\"https://donorbox.org/bot-trasparenzascuole\">LINK</a>\n"
                             "📬 E-Mail: <a href=\"mailto://me@domysh.com\">me@domysh.com</a>\n"
                             "💬 Telegram: <a href=\"https://t.me/DomySh\">@DomySh</a>\n"
