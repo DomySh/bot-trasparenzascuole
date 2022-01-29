@@ -64,7 +64,7 @@ function check_pid_filter(){
             prefix_api = "/pid/"+pid_filter
             change_selection_pid(pid_filter)
         }
-    }
+    }else prefix_api = ""
 }
 
 function updateURLParameter(param, paramVal) {
