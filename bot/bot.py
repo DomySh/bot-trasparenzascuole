@@ -25,7 +25,7 @@ def contact_msg(update,user):
                             "💸 Donazioni: <a href=\"https://donorbox.org/bot-trasparenzascuole\">LINK</a>\n"
                             "📬 E-Mail: <a href=\"mailto://me@domysh.com\">me@domysh.com</a>\n"
                             "💬 Telegram: <a href=\"https://t.me/DomySh\">@DomySh</a>\n"
-                            "💻 Codice Sorgente: <a href=\"https://github.com/DomySh/bot-trasparenzascuole\">domysh/bot-trasparenzascuole</a>"
+                            #"💻 Codice Sorgente: <a href=\"https://github.com/DomySh/bot-trasparenzascuole\">domysh/bot-trasparenzascuole</a>"
                             ,parse_mode='HTML')
 
 
