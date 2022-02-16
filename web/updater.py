@@ -8,6 +8,7 @@ from pathlib import Path
 AXIOS = circolari.TrasparenzeScuoleMap(os.environ["AXIOS_CUSTOMER_ID"])
 AXIOS_PIDS_EXPIRE = int(os.getenv("AXIOS_PIDS_EXPIRE",60*60*1))
 UPDATE_FREQUENCY = int(os.getenv("AXIOS_UPDATER_FREQUENCY",60*3))
+UPDATE_TIMEOUT = int(os.getenv("AXIOS_UPDATER_TIMEOUT",60*10))
 API_CACHE_ATTACHMENTS = os.getenv("API_CACHE_ATTACHMENTS","False").lower() in ("true","t","y","yes","1")
 DATA_DIR = Path(__file__).parent.absolute() / "data"
 DB_CONN = None
@@ -199,6 +200,28 @@ def check_and_update_pids():
                 force_pids_update()
                 traceback.print_exc()
 
+def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
+    import signal
+
+    class TimeoutError(Exception):
+        pass
+
+    def handler(signum, frame):
+        raise TimeoutError()
+
+    # set the timeout handler
+    signal.signal(signal.SIGALRM, handler) 
+    signal.alarm(timeout_duration)
+    try:
+        result = func(*args, **kwargs)
+    except TimeoutError as exc:
+        result = default
+    finally:
+        signal.alarm(0)
+
+    return result
+
+
 def updater():
     if API_CACHE_ATTACHMENTS:
         check_files()
@@ -211,5 +234,6 @@ def updater():
 
 if __name__ == "__main__":
     while True:
-        updater()
+        res = timeout(updater, timeout_duration=UPDATE_TIMEOUT, default="Timeout Exceeded")
+        if res == "Timeout Exceeded": print(res,UPDATE_FREQUENCY,"s")
         time.sleep(UPDATE_FREQUENCY)
