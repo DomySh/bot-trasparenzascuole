@@ -90,7 +90,7 @@ async def get_doc_in_pid_by_index(pid: str,index: int = Path(..., ge=0)):
 async def get_range_of_docs_in_pid(pid: str,index_from: int = Path(..., ge=0),index_to: int = Path(..., ge=0)):
     """Give a range of documents in a pid starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to-index_from+1))
 
 @app.get("/docs/pid/{pid}/search/{search_text}")
 async def search_document_in_pid_by_text(pid: str, search_text: str):
@@ -127,7 +127,7 @@ async def get_doc_by_index(index: int = Path(..., ge=0)):
 async def get_range_of_docs(index_from: int = Path(..., ge=0),index_to: int = Path(..., ge=0)):
     """Give a range of documents starting from index_from giving at maximum index_to elements"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs"].find({}).sort("date",ASCENDING).skip(index_from).limit(index_to-index_from+1))
 
 @app.get("/docs/pids")
 async def pids_info():
@@ -162,7 +162,7 @@ async def get_event_by_index(index: int = Path(..., ge=0)):
 @app.get("/events/range/{index_from}/{index_to}")
 async def events_range(index_from: int = Path(..., ge=0), index_to: int = Path(..., ge=0)):
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs_events"].find({},{"_id":False}).sort("date",ASCENDING).skip(index_from).limit(index_to-index_from+1))
 
 @app.get("/events/update/{last_index}")
 async def events_update(last_index: int = Path(..., ge=0)):
@@ -187,7 +187,7 @@ async def get_event_by_index_in_pid(pid: str, index: int = Path(..., ge=0)):
 async def get_events_range_in_pid(pid: str, index_from: int = Path(..., ge=0), index_to: int = Path(..., ge=0)):
     """Get events in a range in pid"""
     index_from, index_to = index_range(index_from, index_to)
-    return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to))
+    return await mongolist(DB["docs_events"].find({"pid":pid}).sort("date",ASCENDING).skip(index_from).limit(index_to-index_from+1))
 
 @app.get("/events/pid/{pid}/update/{last_index}")
 async def events_updates_in_pid(pid: str, last_index: int = Path(..., ge=0)):
