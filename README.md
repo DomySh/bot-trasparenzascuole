@@ -6,7 +6,7 @@
 Questa piattaforma permette alla tua scuola di gestire i dati in trasparenzascuole.it in maniera più efficiente e facilmente accessibile dalla comunità scolastica! Tutto questo tramite una interfaccia web moderna (ma soprattutto reattiva, veloce e intuitiva), e un bot telegram che permette anche la recezione di notifiche, oltre che a permettere di inviare messaggi personalizzati alla comunità scolastica
 
 Guarda la piattaforma in funzione! I.I.S.S Luigi dell'erba (Castellana Grotte):
-- https://iiss.domysh.com/
+- https://circolari.luigidellerba.edu.it/
 - https://t.me/circolaridellerbabot
 
 --- 
